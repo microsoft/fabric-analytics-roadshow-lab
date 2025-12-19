@@ -1,0 +1,2 @@
+# Python dependencies for deployment and lab exercises
+# These will be installed in the Fabric environment

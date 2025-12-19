@@ -1,0 +1,1 @@
+- inject workspace ID and Item IDs from Fabric CLI into 1_ExploreData Notebook before deploying so that Item links are applicable

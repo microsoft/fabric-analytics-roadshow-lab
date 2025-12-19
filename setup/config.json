@@ -1,0 +1,23 @@
+{
+  "workspace": {
+    "name": "Fabric-Analytics-Roadshow",
+    "description": "Interactive lab workspace for Fabric Spark and Warehouse"
+  },
+  "lakehouse": {
+    "name": "RoadshowLakehouse",
+    "description": "Lakehouse for storing and processing data"
+  },
+  "warehouse": {
+    "name": "RoadshowWarehouse",
+    "description": "Data warehouse for analytics"
+  },
+  "deployment": {
+    "notebook_prefix": "Lab-",
+    "overwrite_existing": false,
+    "validate_after_deploy": true
+  },
+  "data_sources": {
+    "sample_data_url": "https://example.com/sample-data",
+    "use_local_samples": true
+  }
+}
