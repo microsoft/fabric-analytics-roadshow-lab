@@ -46,7 +46,6 @@ desktop.ini
 # Data files (large datasets should not be committed)
 *.csv
 *.parquet
-*.json
 *.xlsx
 *.xls
 !data/schemas/*.json
