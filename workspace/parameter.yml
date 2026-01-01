@@ -26,14 +26,7 @@ find_replace:
     item_type: "SparkJobDefinition" # filter on notebook files
     item_name: ["StreamBronzeAndSilver"] # filter on specific notebook files
 
-  - find_value: |
-        "environmentArtifactId":\s*"([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})"
-    replace_value:
-      _ALL_: "$items.Environment.SparkEnv.$id" # lakehouse GUID (dynamic)
-    is_regex: "true"
-    item_type: "SparkJobDefinition" # filter on notebook files
-    item_name: ["StreamBronzeAndSilver"] # filter on specific notebook files
-
+  # Update SJD URL in Notebook Markdown
   - find_value: $sparkJobDefinitionId
     replace_value:
       _ALL_: "$items.SparkJobDefinition.StreamBronzeAndSilver.$id" # SJD GUID (dynamic)
