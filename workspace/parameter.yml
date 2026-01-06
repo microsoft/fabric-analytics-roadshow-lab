@@ -40,3 +40,16 @@ find_replace:
     is_regex: "false"
     item_type: "Notebook" # filter on notebook files
     item_name: ["1_ExploreData"] # filter on specific notebook files
+
+  # warehouse GUID matching group 1 of regex pattern to be replaced
+  - find_value: \#\s*META\s+"default_warehouse":\s*"([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})"
+    replace_value:
+      _ALL_: "$items.Warehouse.SalesAndLogisticsWH.$id" # warehouse GUID (dynamic)
+    is_regex: "true"
+    item_type: "Notebook" # filter on notebook files
+    item_name: ["2_ModelData"] # filter on specific notebook files
+  # warehouse GUID in known_warehouses array
+  - find_value: e0b59438-dd1e-aef5-4826-ec248fd6e79b
+    replace_value:
+      _ALL_: "$items.Lakehouse.SalesAndLogisticsWH.$id" # lakehouse GUID (dynamic)
+    item_type: "Notebook" # filter on notebook files
