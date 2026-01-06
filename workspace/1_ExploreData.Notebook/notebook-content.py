@@ -1156,7 +1156,7 @@ display(df)
 # 
 # | Experience | What You'll Learn |
 # |----------|-------------------|
-# | **🥇 2_GoldLayer** Notebook | Build dimensional models in Fabric Warehouse using T-SQL |
+# | **🥇 2_ModelData** Notebook | Build dimensional models in Fabric Warehouse using T-SQL |
 # | **🤖 3_SalesAndLogisticsAgent** | Chat with your data using natural language via a Data Agent |
 # 
 # ### 📚 Additional Resources
@@ -1176,7 +1176,7 @@ display(df)
 # 1. **Start with batch** - Prototype transformations in batch mode, then convert to streaming
 # 2. **Monitor from day one** - Track latency and data quality from the beginning
 # 3. **Leverage AI functions** - Transform unstructured text data into structured insights
-# 4. **Enable Native Execution** - Get 3-10x performance gains for free in your Spark environments
+# 4. **Enable Native Execution** - Get 2-10x performance gains for free in your Spark environments
 # 5. **Trust Auto Compaction** - Let Fabric optimize your Delta tables automatically
 # 
 # ---
