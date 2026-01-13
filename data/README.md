@@ -1,1 +1,0 @@
-Data is provided via the McMillan Data Generator in LakeGen. This is a lightweight Python library used to generate data for various use cases.

@@ -1,3 +1,0 @@
-- inject workspace ID and Item IDs from Fabric CLI into 1_ExploreData Notebook before deploying so that Item links are applicable
-- deployment of workspace items via Fabric CLI
-- figure out model for deploying, does the user run the Setup Notebook or do we run setup beforehand?
