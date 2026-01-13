@@ -71,7 +71,7 @@
 -- 
 -- 1. **Data warehouse fundamentals** - What are dimensions and facts?
 -- 2. **Working with schemas and tables** - Create schemas and explore supported DDL
--- 3. **Transforming data with T-SQL** - Use stored procedures to move data from silver to gold
+-- 3. **Loading and transforming data with T-SQL** - Use stored procedures to move data from silver to gold
 -- 4. **Operationalize warehouse loading** - Orchestrate and schedule data warehouse loading with Data Factory
 -- 
 -- ### The Target Schema
@@ -103,9 +103,9 @@
 -- - Tables are often relatively narrow and very long.
 -- - Additional columns contain keys back to dimensions which describe the events.
 -- - Fact tables generally fall into the following categories:
---     - Transactional: Each row represents an individual transaction such as an order or a call to a call center.
---     - Snapshot: Track periodic views of the data over time each with a common snapshot date such as product inventory.
---     - Factless Fact (aka Bridge): Do not contain measures, instead just contain a set of intersecting keys. This is commonly used for defining security and can be used to track things like student attendance for a class for a particular date).
+--     - **Transactional**: Each row represents an individual transaction such as an order or a call to a call center.
+--     - **Snapshot**: Track periodic views of the data over time each with a common snapshot date such as product inventory.
+--     - **Factless Fact** (aka **Bridge**): Do not contain measures, instead just contain a set of intersecting keys. This is commonly used for defining security and can be used to track things like student attendance for a class for a particular date).
 
 
 -- MARKDOWN ********************
@@ -168,7 +168,6 @@ SELECT * FROM sys.schemas WHERE name IN ('dim', 'fact')
 -- - Dim Order Source
 -- - Fact Sale
 -- - Fact Shipment
--- - etl_tracking (used to track load dates by table to enable incremental loading)
 
 
 -- CELL ********************
@@ -182,7 +181,6 @@ DROP TABLE IF EXISTS [dim].[item]
 DROP TABLE IF EXISTS [dim].[order_source]
 DROP TABLE IF EXISTS [fact].[order]
 DROP TABLE IF EXISTS [fact].[shipment]
-DROP TABLE IF EXISTS [dbo].[etl_tracking]
 GO
 
 /* Create each table. Notice the identity columns on each dimension have a data type of BIGINT. */
@@ -234,7 +232,10 @@ CREATE TABLE [dim].[date]
         [year]          [SMALLINT]      NOT NULL
     )
 
-INSERT INTO dbo.dim_date
+INSERT INTO [dim].[date]
+VALUES (19000101, '1900-01-01', 'Unknown', 'Unknown', 'Unknown', 'Unknown', -1, -1)
+
+INSERT INTO [dim].[date]
 SELECT
     /*  Date  */
     CONVERT(VARCHAR, [date], 112) AS date_sk,
@@ -343,7 +344,159 @@ CREATE TABLE [fact].[shipment]
 		[is_hazardous] 						[bit] 			    NULL,
 		[requires_refrigeration] 			[bit] 			    NULL
 	)
+GO
 
+SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA IN ('dim', 'fact')
+
+-- METADATA ********************
+
+-- META {
+-- META   "language": "sql",
+-- META   "language_group": "sqldatawarehouse"
+-- META }
+
+-- MARKDOWN ********************
+
+-- ## 🛠️ Part 3: Loading and Transforming Data With T-SQL 
+-- 
+-- With all the tables created it is time to shift the focus to data transformation and loading. 
+-- 
+-- Before looking at moving data from the silver to gold layers, let's take a look at a way to bring in data from outside the warehouse using the T-SQL COPY INTO and OPENROWSET commands. 
+-- 
+-- The **COPY** command is a high performance loading mechanism for bringing data in from Azure storage. In this lab we will bring in a static dataset, the date dimension, as it only needs to be loaded once and there is no additional transformation logic required. 
+-- 
+-- The **OPENROWSET** command allows you to directly read data from files stored in OneLake or external Azure storage accounts without prior ingestion into a table. It can be used for data exploration or data ingestion. 
+-- 
+-- Look at the code in the cell below and run it to create a sample data table and ingest the data from Azure storage into the dbo.CopyIntoExample table and view the data in the table.
+
+
+-- CELL ********************
+
+DROP TABLE IF EXISTS [dbo].[CopyIntoExample]
+GO
+
+CREATE TABLE [dbo].[CopyIntoExample]
+    (
+        [Date]                      [date]           NOT NULL,
+        [DayNumber]                 [int]            NOT NULL,
+        [Day]                       [varchar](10)    NOT NULL,
+        [Month]                     [varchar](10)    NOT NULL,
+        [ShortMonth]                [varchar](3)     NOT NULL,
+        [CalendarMonthNumber]       [int]            NOT NULL,
+        [CalendarMonthLabel]        [varchar](20)    NOT NULL,
+        [CalendarYear]              [int]            NOT NULL,
+        [CalendarYearLabel]         [varchar](10)    NOT NULL,
+        [FiscalMonthNumber]         [int]            NOT NULL,
+        [FiscalMonthLabel]          [varchar](20)    NOT NULL,
+        [FiscalYear]                [int]            NOT NULL,
+        [FiscalYearLabel]           [varchar](10)    NOT NULL,
+        [ISOWeekNumber]             [int]            NOT NULL
+    )
+GO
+
+/* Load the data from Azure storage using the COPY command */
+COPY INTO dbo.CopyIntoExample FROM 'https://fabrictutorialdata.blob.core.windows.net/sampledata/WideWorldImportersDW/parquet/tables/DimDate.parquet' WITH (FILE_TYPE = 'PARQUET');
+
+/* View the data in the table */
+SELECT
+    *
+FROM dbo.CopyIntoExample
+
+-- METADATA ********************
+
+-- META {
+-- META   "language": "sql",
+-- META   "language_group": "sqldatawarehouse"
+-- META }
+
+-- MARKDOWN ********************
+
+-- As metioned above, the OPENROWSET command is another powerful tool for exploring and loading data. Run the cell below to see how the OPENROWSET command can be used to read data directly from Azure storage and can be used just like any other table in the warehouse by joining, aliasing columns, and using other T-SQL commands. 
+
+-- CELL ********************
+
+/* View the data from Azure storage using the OPENROWSET command */
+
+/* Using a line like INSERT INTO dbo.OPENROWSETExampleQuery here would allow you to transform and ingest data using OPENROWSET */
+SELECT
+    CASE WHEN cie.[Date] IS NOT NULL THEN 1 ELSE 0 END AS record_in_example_table,
+    CONVERT(VARCHAR, d.[Date], 112) AS date_sk,
+    d.[Date] AS [date],
+    d.DayNumber AS day_number,
+    d.[Day] AS [day],
+    d.[Month] AS [month],
+    d.ShortMonth AS short_month,
+    d.CalendarMonthNumber AS calendar_month_number,
+    d.CalendarMonthLabel AS calendar_month_label,
+    d.CalendarYear AS calendar_year,
+    d.CalendarYearLabel AS calendar_year_label,
+    d.FiscalMonthNumber AS fiscal_month_number,
+    d.FiscalMonthLabel AS fiscal_month_label,
+    d.FiscalYear AS fiscal_year,
+    d.FiscalYearLabel AS fiscal_year_label,
+    d.ISOWeekNumber AS iso_week_number
+FROM OPENROWSET(BULK 'https://fabrictutorialdata.blob.core.windows.net/sampledata/WideWorldImportersDW/parquet/tables/DimDate.parquet') AS d
+FULL OUTER JOIN dbo.CopyIntoExample AS cie
+    ON d.[Date] = cie.[Date]
+
+-- METADATA ********************
+
+-- META {
+-- META   "language": "sql",
+-- META   "language_group": "sqldatawarehouse"
+-- META }
+
+-- MARKDOWN ********************
+
+-- There are many ways to write the logic found in this part of the lab. We will be using one of the more common methods which involves incrementally pulling data from the silver layer and handling the INSERT and UPDATE logic in a single T-SQL MERGE statement. While the tables are setup to show how they can handle type 2 attribute logic there is no special handling for those attributes as the data generator does not change any existing records. 
+-- 
+-- **Incremental loads**
+-- 
+-- There are two main ways to load data: full and incremental. A full involves bringing in the entire source dataset and comparing it to the full warehouse dataset on each ETL run. On smaller dimension tables this may not be a problem. However, as fact tables grow larger this means the ETL runtime will be ever increasing. A more efficient method is to identify changes on the source system using change data capture or a date field and only bring over the changes. By doing this there is less load on the source system because it is pulling less data and there is less load on the warehouse as it only needs to process new and updated records. For this lab, we will implement a common incremental load pattern. 
+-- 
+-- To facilitate incrementally pulling data from the silver layer we will be creating an etl_tracking table, also known as a watermark table, in the dbo schema. This table will track the cutoff date, or last load date, for each table in the warehouse. This allows us to write the transformation logic in such a way that it ignores any records generated in the silver layer prior to the last ETL runtime. 
+-- 
+-- Each time a warehouse table is loaded the transformation logic will look at the etl_tracking table, get the last_load_datetime and use that in a WHERE clause on the query that pulls from the silver layer. Upon completion, the stored procedure will update the last_load_datetime so the next run of the ETL will only pick up new records from the time of the prior run. 
+-- 
+-- To ensure all the procedures are looking at the same slice of time when loading the gold layer we will write the stored procedures in such a way that they accept an optional date parameter. Because the procedures will not all run exactly parallel due to slight variations in start time this prevents the tables being loaded from slightly different time slices which could affect the consistency of the data across dimensions and facts. An example of the mismatched time slices is shown below along with how the watermark table will solve this.
+-- 
+-- | Table | Previous ETL Start Time | ETL Start Time | ETL End Time | Time Slice Used |
+-- | -- | -- | -- | -- | -- |
+-- | dim.customer | 2026-01-05 10:05:27 | 2026-01-06 10:09:16 | 2026-01-06 10:14:23 | 2026-01-05 10:05:27 to 2026-01-06 10:09:16
+-- | dim.item | 2026-01-05 10:04:58 | 2026-01-06 10:05:48 | 2026-01-06 10:09:18 | 2026-01-05 10:04:58 to 2026-01-06 10:05:48
+-- | fact.order | 2026-01-05 10:25:38 | 2026-01-06 10:28:04 | 2026-01-06 10:36:01 | 2026-01-05 10:25:38 to 2026-01-06 10:28:04
+-- 
+-- Notice how each table is using a different time slice when running. If you look closely you can see there is the possibility that an order record is generated at 10:15 on January 6 and gets loaded into the fact order table when the ETL starts running at 10:28. If that record is for a new customer which was also generated at 10:15 the data warehouse would include the order record but there would be no associated customer record because that ETL process has already completed. It would not be until the warehouse is loaded again that the new customer record will be included in the customer dimension and you'll need to fix the key value on the fact table. This leads to a large amount of ETL processing and potential confusion for end users. 
+-- 
+-- **One potential solution**
+-- 
+-- If we look at that same scenario but now use a common ETL batch start time that we pass into each procedure and we track the batch start time in our etl_tracking table, you can see that each time slice being considered is the same regardless of the variance in start/end times of each table's load.
+-- 
+-- 1. Batch start time is captured by an orchestration process, in this example ***2026-01-05 10:01:10***.
+-- 1. Batch start time is passed into the stored procedure to load the warehouse table.
+-- 1. Stored procedure looks up the last_load_datetime for the table from the etl_tracking table.
+-- 1. Stored procedure parameterizes the WHERE statement to pull data from the last_load_datetime to the new batch start time passed into the procedure. 
+-- 1. ETL logic is run to transform and incrementally load the table. 
+-- 1. Stored procedure updates the last_load_datetime column in the etl_tracking table for the table being loaded using the batch start time that was passed into the procedure.
+-- 
+-- | Table | Previous ETL Start Time | ETL Start Time | ETL End Time | Time Slice Used |
+-- | -- | -- | -- | -- | -- |
+-- | dim.customer | 2026-01-05 10:01:18 | 2026-01-06 10:09:16 | 2026-01-06 10:14:23 | 2026-01-05 10:01:18 to 2026-01-05 10:01:10
+-- | dim.item | 2026-01-05 10:01:18 | 2026-01-06 10:05:48 | 2026-01-06 10:09:18 | 2026-01-05 10:01:18 to 2026-01-05 10:01:10
+-- | fact.order | 2026-01-05 10:01:18 | 2026-01-06 10:28:04 | 2026-01-06 10:36:01 | 2026-01-05 10:01:18 to 2026-01-05 10:01:10
+-- 
+-- This process ensures that each table load is looking at the same time slice. While there are errors that occur in ETL processes and this is not a foolproof method to ensure there is never an orphaned record, it is a great starting point and often good enough for many solutions. 
+-- 
+-- Now that we have an understanding of the method by which we will track incremental loads and the reason behind this method, run the following cell to create the etl_tracking table and populate it for the initial load by providing a last_load_datetime of 1900-01-01 to ensure all records in the silver tables are captured. 
+
+
+-- CELL ********************
+
+/* Drop the table if it exists, this is useful in case the script is run multiple times. */
+DROP TABLE IF EXISTS [dbo].[etl_tracking]
+GO
+
+/* Create and populate the tracking table. */
 CREATE TABLE [dbo].[etl_tracking]
     (
         [etl_tracking_id]       [int]           NOT NULL,
@@ -360,10 +513,14 @@ VALUES
     (5, 'dim.order_source',    '1900-01-01 00:00:00'),
     (6, 'fact.order',          '1900-01-01 00:00:00'),
     (7, 'fact.shipment',       '1900-01-01 00:00:00')
-
 GO
 
-SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA IN ('dim', 'fact') OR TABLE_NAME = 'etl_tracking'
+/* View the records in the table to ensure everything is setup for the first run. */
+SELECT
+    *
+FROM dbo.etl_tracking
+ORDER BY 
+    table_name
 
 -- METADATA ********************
 
@@ -374,13 +531,11 @@ SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA IN ('dim', 'fact') OR
 
 -- MARKDOWN ********************
 
--- ## 🛠️ Part 3: Transforming Data With T-SQL 
--- 
--- With all the tables created it is time to transform and load the data. We will use stored procedures to encapsulate the transformation logic so it can be called interactively or through a pipeline. 
+-- Now that the incremental loading infrastructure is in place it's time to get started on data transformation. We will use stored procedures to encapsulate the transformation logic so it can be called interactively or through a pipeline. 
 -- 
 -- **Stored procedures** 
 -- 
--- A stored procedure is a named, reusable block of SQL code saved inside a database. Instead of sending multiple SQL statements from an application, a stored procedure encapsulates that logic so you call it with a single execution. In a warehouse, this code will clean, transform, and perform INSERT and UPDATE logic. Each procedure accepts a date parameter which will be used as a cutoff date in the query against the silver layer tables. Effectively the logic is written so only records added to the silver layer after the prior ETL run and before the date passed to the parameter are considered. At the end of the procedure the etl_tracking is updated using the date parameter value to reflect the new last_load_date. This prevents the fact tables, which run last, from having new records associated with customers that were create in the gap after the customer dimension was processed but before the fact orders table was processed. 
+-- A stored procedure is a named, reusable block of SQL code saved inside a database. Instead of sending multiple SQL statements from an application, a stored procedure encapsulates that logic so you call it with a single execution. In a warehouse, this code will clean, transform, and perform INSERT and UPDATE logic. Each procedure accepts a date parameter which will be used as a cutoff date in the query against the silver layer tables. Effectively the logic is written so only records added to the silver layer after the start of the prior ETL run and before the date passed to the parameter are considered. At the end of the procedure the etl_tracking is updated using the date parameter value to reflect the new last_load_date. 
 -- 
 -- **MERGE** 
 -- 
@@ -867,7 +1022,8 @@ GO
 -- CELL ********************
 
 DECLARE @dim_address        BIGINT 
-DECLARE @dim_customer       BIGINT 
+DECLARE @dim_customer       BIGINT
+DECLARE @dim_date           BIGINT 
 DECLARE @dim_facility       BIGINT
 DECLARE @dim_item           BIGINT
 DECLARE @dim_order_source   BIGINT
@@ -878,6 +1034,7 @@ DECLARE @fact_shipment      BIGINT
 SELECT
     @dim_address        = (SELECT COUNT_BIG(*) FROM dim.address),
     @dim_customer       = (SELECT COUNT_BIG(*) FROM dim.customer),
+    @dim_date           = (SELECT COUNT_BIG(*) FROM dim.[date]),
     @dim_facility       = (SELECT COUNT_BIG(*) FROM dim.facility),
     @dim_item           = (SELECT COUNT_BIG(*) FROM dim.item),
     @dim_order_source   = (SELECT COUNT_BIG(*) FROM dim.order_source),
@@ -898,6 +1055,7 @@ EXEC load_fact_shipment     @data_warehouse_load_time
 /* Get the record count after running the procedures and compare them to the before numbers */
 SELECT @dim_address        AS record_count_before, COUNT_BIG(*) AS record_count_after, COUNT_BIG(*) - @dim_address        AS record_count_change, 'dim.address'       AS table_name FROM dim.address        UNION ALL
 SELECT @dim_customer       AS record_count_before, COUNT_BIG(*) AS record_count_after, COUNT_BIG(*) - @dim_customer       AS record_count_change, 'dim.customer'      AS table_name FROM dim.customer       UNION ALL
+SELECT @dim_date           AS record_count_before, COUNT_BIG(*) AS record_count_after, COUNT_BIG(*) - @dim_date           AS record_count_change, 'dim.date'          AS table_name FROM dim.[date]         UNION ALL
 SELECT @dim_facility       AS record_count_before, COUNT_BIG(*) AS record_count_after, COUNT_BIG(*) - @dim_facility       AS record_count_change, 'dim.facility'      AS table_name FROM dim.facility       UNION ALL
 SELECT @dim_item           AS record_count_before, COUNT_BIG(*) AS record_count_after, COUNT_BIG(*) - @dim_item           AS record_count_change, 'dim.item'          AS table_name FROM dim.item           UNION ALL
 SELECT @dim_order_source   AS record_count_before, COUNT_BIG(*) AS record_count_after, COUNT_BIG(*) - @dim_order_source   AS record_count_change, 'dim.order_source'  AS table_name FROM dim.order_source   UNION ALL
@@ -914,3 +1072,11 @@ SELECT @fact_shipment      AS record_count_before, COUNT_BIG(*) AS record_count_
 -- MARKDOWN ********************
 
 -- ## 🏭 Part 4: Operationalize Warehouse Loading
+-- 
+-- *This portion of the lab is optional.*
+-- 
+-- All the objects needed to load the data warehouse (gold layer) are now in place! There is only one step left to operationalize the execution of the stored procedures. Right now, they need to be manually executed. Ideally, you will create a Data Factory pipeline to execute the procedures in the correct order and schedule it. 
+-- 
+-- Open your Fabric workspace in a new tab and follow the instructions below.
+-- 
+-- ****
