@@ -75,7 +75,7 @@
 # ### Step 1: Trigger the Spark Job Definition
 # > **Note:** Please read the full instructions for this step before opening the Spark Job Definition.
 # 
-# 1. **Open Spark Job Definition** - Click here to open: [StreamBonzeAndSilver](https://app.powerbi.com/groups/$workspaceId/sparkjobdefinitions/$sparkJobDefinitionId?experience=power-bi)
+# 1. **Open Spark Job Definition** - Click here to open: [StreamBonzeAndSilver](https://msit.powerbi.com/groups/60c4c0e4-1e55-44cc-b6c3-860d3bb431ba/sparkjobdefinitions/fd65b0b2-98a3-48cd-8b9d-9c35674fe1e5?experience=power-bi)
 # 1. **Click** the **"Run"** button at the top of the screen
 # 1. **Confirm** the job starts successfully (you'll see a status of "Running")
 # 1. **Return** to this Notebook (1_ExploreData)
@@ -1156,7 +1156,7 @@ display(df)
 # 
 # | Experience | What You'll Learn |
 # |----------|-------------------|
-# | **🥇 2_ModelData** Notebook | Build dimensional models in Fabric Warehouse using T-SQL |
+# | **🥇 2_GoldLayer** Notebook | Build dimensional models in Fabric Warehouse using T-SQL |
 # | **🤖 3_SalesAndLogisticsAgent** | Chat with your data using natural language via a Data Agent |
 # 
 # ### 📚 Additional Resources
@@ -1176,7 +1176,7 @@ display(df)
 # 1. **Start with batch** - Prototype transformations in batch mode, then convert to streaming
 # 2. **Monitor from day one** - Track latency and data quality from the beginning
 # 3. **Leverage AI functions** - Transform unstructured text data into structured insights
-# 4. **Enable Native Execution** - Get 2-10x performance gains for free in your Spark environments
+# 4. **Enable Native Execution** - Get 3-10x performance gains for free in your Spark environments
 # 5. **Trust Auto Compaction** - Let Fabric optimize your Delta tables automatically
 # 
 # ---

@@ -8,7 +8,6 @@ dynamic_executor_allocation:
   min_executors: 1
   max_executors: 2
 spark_conf:
-  spark.native.enabled: true
-  spark.microsoft.delta.snapshot.driverMode.enabled: true
-  spark.microsoft.delta.parallelSnapshotLoading.enabled: true
+  spark.native.enabled: True
+  spark.microsoft.delta.snapshot.driverMode.enabled: True
 runtime_version: 1.3
