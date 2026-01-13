@@ -1,0 +1,26 @@
+CREATE TABLE [fact].[shipment] (
+
+	[shipment_sk] bigint IDENTITY NOT NULL, 
+	[tracking_number] varchar(25) NOT NULL, 
+	[order_number] varchar(25) NOT NULL, 
+	[ship_date_sk] int NOT NULL, 
+	[committed_delivery_date_sk] int NOT NULL, 
+	[delivery_date_sk] int NOT NULL, 
+	[customer_sk] bigint NOT NULL, 
+	[origin_address_sk] bigint NOT NULL, 
+	[destination_address_sk] bigint NOT NULL, 
+	[service_level] varchar(25) NULL, 
+	[delivery_days_late] int NULL, 
+	[late_delivery_penalty_per_day] float NULL, 
+	[late_delivery_penalty] float NULL, 
+	[shipment_distance] float NULL, 
+	[declared_value] float NULL, 
+	[height] float NULL, 
+	[width] float NULL, 
+	[length] float NULL, 
+	[volume] float NULL, 
+	[weight] float NULL, 
+	[is_fragile] bit NULL, 
+	[is_hazardous] bit NULL, 
+	[requires_refrigeration] bit NULL
+);

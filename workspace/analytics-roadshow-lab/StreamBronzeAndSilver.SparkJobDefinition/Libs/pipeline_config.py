@@ -11,7 +11,7 @@ Edit this file to configure your lakehouse pipelines.
 
 from pyspark.sql import DataFrame
 import pyspark.sql.functions as sf
-from arcflow import FlowConfig, StageConfig
+from arcflow import SourceConfig, ZoneConfig
 from arcflow.transformations.zone_transforms import register_zone_transformer
 from pyspark.sql.types import (
     StructType,
@@ -47,7 +47,7 @@ def silver_item(df) -> DataFrame:
     return df
 
 
-tables["item"] = FlowConfig(
+tables["item"] = SourceConfig(
     name="item",
     format="parquet",
     source_uri="Files/landing/item",
@@ -77,11 +77,11 @@ tables["item"] = FlowConfig(
     trigger_mode='processingTime',
     clean_source=True,
     zones={
-        "bronze": StageConfig(
+        "bronze": ZoneConfig(
             enabled=True,
             mode="append",
         ),
-        "silver": StageConfig(
+        "silver": ZoneConfig(
             enabled=True,
             mode="merge",
             merge_keys=["item_id"],
@@ -110,7 +110,7 @@ def silver_shipment(df) -> DataFrame:
     return df
 
 
-tables["shipment"] = FlowConfig(
+tables["shipment"] = SourceConfig(
     name="shipment",
     format="json",
     source_uri="Files/landing/shipment",
@@ -189,10 +189,10 @@ tables["shipment"] = FlowConfig(
     trigger_mode='processingTime',
     clean_source=True,
     zones={
-        "bronze": StageConfig(
+        "bronze": ZoneConfig(
             enabled=True, mode="append", custom_transform="explode_data"
         ),
-        "silver": StageConfig(
+        "silver": ZoneConfig(
             enabled=True,
             mode="append",
             custom_transform="silver_shipment",
@@ -218,7 +218,7 @@ def silver_shipment_scan_event(df) -> DataFrame:
     return df
 
 
-tables["shipment_scan_event"] = FlowConfig(
+tables["shipment_scan_event"] = SourceConfig(
     name="shipment_scan_event",
     format="json",
     source_uri="Files/landing/shipment_scan_event",
@@ -309,10 +309,10 @@ tables["shipment_scan_event"] = FlowConfig(
     trigger_mode='processingTime',
     clean_source=True,
     zones={
-        "bronze": StageConfig(
+        "bronze": ZoneConfig(
             enabled=True, mode="append", custom_transform="explode_data"
         ),
-        "silver": StageConfig(
+        "silver": ZoneConfig(
             enabled=True,
             mode="append",
             custom_transform="silver_shipment_scan_event",
@@ -333,7 +333,7 @@ def silver_order_transformer(df) -> DataFrame:
     return df
 
 
-tables["order"] = FlowConfig(
+tables["order"] = SourceConfig(
     name="order",
     format="parquet",
     source_uri="Files/landing/order",
@@ -342,10 +342,10 @@ tables["order"] = FlowConfig(
     trigger_mode='processingTime',
     clean_source=True,
     zones={
-        "bronze": StageConfig(
+        "bronze": ZoneConfig(
             enabled=True, mode="append"
         ),
-        "silver": StageConfig(
+        "silver": ZoneConfig(
             enabled=True,
             mode="append",
             custom_transform="silver_order_transformer",
@@ -378,7 +378,7 @@ def silver_customer_transformer(df) -> DataFrame:
     return df
 
 
-tables["customer"] = FlowConfig(
+tables["customer"] = SourceConfig(
     name="customer",
     format="parquet",
     source_uri="Files/landing/customer",
@@ -387,10 +387,10 @@ tables["customer"] = FlowConfig(
     trigger_mode='processingTime',
     clean_source=True,
     zones={
-        "bronze": StageConfig(
+        "bronze": ZoneConfig(
             enabled=True, mode="append"
         ),
-        "silver": StageConfig(
+        "silver": ZoneConfig(
             enabled=True,
             mode="upsert",
             merge_keys=["customer_id"],
@@ -403,7 +403,7 @@ tables["customer"] = FlowConfig(
 def cast_generated_at(df) -> DataFrame:
     return df.withColumn("generated_at", sf.col("generated_at").cast(TimestampType()))
 
-tables["service_level"] = FlowConfig(
+tables["service_level"] = SourceConfig(
     name="service_level",
     format="parquet",
     source_uri="Files/landing/servicelevel",
@@ -411,10 +411,10 @@ tables["service_level"] = FlowConfig(
     description="Shipment service level",
     trigger_mode='availableNow',
     zones={
-        "bronze": StageConfig(
+        "bronze": ZoneConfig(
             enabled=True, mode="append"
         ),
-        "silver": StageConfig(
+        "silver": ZoneConfig(
             enabled=True,
             mode="upsert",
             merge_keys=["level"],
@@ -423,7 +423,7 @@ tables["service_level"] = FlowConfig(
     }
 )
 
-tables["exception_type"] = FlowConfig(
+tables["exception_type"] = SourceConfig(
     name="exception_type",
     format="parquet",
     source_uri="Files/landing/exceptiontype",
@@ -431,10 +431,10 @@ tables["exception_type"] = FlowConfig(
     description="Shipment exception type",
     trigger_mode='availableNow',
     zones={
-        "bronze": StageConfig(
+        "bronze": ZoneConfig(
             enabled=True, mode="append"
         ),
-        "silver": StageConfig(
+        "silver": ZoneConfig(
             enabled=True,
             mode="upsert",
             merge_keys=["code"],
@@ -443,7 +443,7 @@ tables["exception_type"] = FlowConfig(
     }
 )
 
-tables["facility"] = FlowConfig(
+tables["facility"] = SourceConfig(
     name="facility",
     format="parquet",
     source_uri="Files/landing/facility",
@@ -451,10 +451,10 @@ tables["facility"] = FlowConfig(
     description="Shipment facility",
     trigger_mode='availableNow',
     zones={
-        "bronze": StageConfig(
+        "bronze": ZoneConfig(
             enabled=True, mode="append"
         ),
-        "silver": StageConfig(
+        "silver": ZoneConfig(
             enabled=True,
             mode="upsert",
             merge_keys=["facility_id"],
@@ -463,7 +463,7 @@ tables["facility"] = FlowConfig(
     }
 )
 
-tables["route"] = FlowConfig(
+tables["route"] = SourceConfig(
     name="route",
     format="parquet",
     source_uri="Files/landing/route",
@@ -471,10 +471,10 @@ tables["route"] = FlowConfig(
     description="Shipment routes",
     trigger_mode='availableNow',
     zones={
-        "bronze": StageConfig(
+        "bronze": ZoneConfig(
             enabled=True, mode="append"
         ),
-        "silver": StageConfig(
+        "silver": ZoneConfig(
             enabled=True,
             mode="upsert",
             merge_keys=["route_id"],
