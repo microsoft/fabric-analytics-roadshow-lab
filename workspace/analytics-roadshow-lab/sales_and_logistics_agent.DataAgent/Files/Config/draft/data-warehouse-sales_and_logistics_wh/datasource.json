@@ -2,28 +2,28 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/dataAgent/definition/dataSource/1.0.0/schema.json",
   "artifactId": "e0b59438-dd1e-aef5-4826-ec248fd6e79b",
   "workspaceId": "00000000-0000-0000-0000-000000000000",
-  "dataSourceInstructions": "## Key information\r\n\r\n**Sales and orders**\r\n\r\n- An order is commonly referred to as \"sales\", a \"sale\", and \"orders\". Always use the *fact.order* table for these inquiries. \r\n- A single order_number can contain one or more order_line_number. \r\n- Aggregate all order_line_number records together to get order_number level information.\r\n- When referring to an order, search and aggregate by the order_number column.\r\n- When asked about sales amount or order amount or money spent use the extended_price field.\r\n\r\n**Items**\r\n\r\n- When asked about items or products, look at *dim.item*.\r\n- Slice by brand, category. \r\n\r\n**Customers**\r\n\r\n- For questions about customers, use their *delivery_state *for analysis instead of the *billing_state*.\r\n\r\n**Shipment**\r\n\r\n- Each shipment will have one record in the *fact.shipment* table. \r\n- When analyzing shipments use the *destination_*address_sk** field in the *fact.shipment* table to join to the *dim.address* table on the address_sk field. \r\n- Do not use the origin_address_sk field unless explicitly told to do so. \r\n\r\n**Combined Order and Shipment analysis**\r\n\r\n- When asked about orders and shipments together, use *order_number* to join *fact.shipment* and *fact.order*.\r\n- A single *order_number* in *fact.order* may have multiple associated shipments in *fact.shipment*. ",
-  "displayName": "SalesAndLogisticsWH",
+  "dataSourceInstructions": null,
+  "displayName": "sales_and_logistics_wh",
   "type": "data_warehouse",
-  "userDescription": "The **SalesAndLogisticsWH** data warehouse contains data for orders, shipments, and the details surrounding those actions. It has tables for customer, date, item, order_source, order, and shipment. Use this source for questions about orders, including their line item detail, and customer purchase habits. Also use this source for aggregated shipment information including when shipments left, when they were scheduled to arrive, and when they actually arrived. This data does not contain detail level shipping data for each scan event on a shipment's journey. ",
+  "userDescription": null,
   "metadata": {},
   "elements": [
     {
-      "id": "cf471c8d-eed4-4be8-8236-914e889082b5",
+      "id": "835b0b85-9432-408b-8040-231fc39a02b8",
       "is_selected": false,
       "display_name": "dim",
       "type": "warehouse_tables.schema",
       "description": null,
       "children": [
         {
-          "id": "7c5f7e4f-ccd1-4509-a8b6-20d04d141450",
-          "is_selected": true,
+          "id": "f15d1ef1-095e-4966-8ed1-4fe14a824977",
+          "is_selected": false,
           "display_name": "address",
           "type": "warehouse_tables.table",
           "description": null,
           "children": [
             {
-              "id": "2c6f77fe-3e07-4944-b322-3333096657fb",
+              "id": "162de06c-66c0-4633-8f4c-60ef23b016af",
               "is_selected": true,
               "display_name": "address_line_1",
               "type": "warehouse_tables.column",
@@ -32,7 +32,7 @@
               "children": []
             },
             {
-              "id": "a9193cb8-4dff-49e3-bbf1-3f5ec4c6f4af",
+              "id": "fc924da3-1057-47dc-bc8b-cc81088d8b67",
               "is_selected": true,
               "display_name": "address_line_2",
               "type": "warehouse_tables.column",
@@ -41,7 +41,7 @@
               "children": []
             },
             {
-              "id": "bd83cfa1-48e3-405b-a565-90ebad5affa2",
+              "id": "ad14261e-b7a5-4383-a1cc-7732a8693602",
               "is_selected": true,
               "display_name": "address_sk",
               "type": "warehouse_tables.column",
@@ -50,7 +50,7 @@
               "children": []
             },
             {
-              "id": "7a3e1cee-56cf-446d-8abf-37b370c56b86",
+              "id": "39854358-bd17-4bae-b65e-1fc17a8f1dc6",
               "is_selected": true,
               "display_name": "city",
               "type": "warehouse_tables.column",
@@ -59,7 +59,7 @@
               "children": []
             },
             {
-              "id": "c0bfc7b7-ac57-4006-8ce4-04dc9ed7fd2e",
+              "id": "6ef0f7f6-c9f4-4591-bc5f-b037e698df5d",
               "is_selected": true,
               "display_name": "country",
               "type": "warehouse_tables.column",
@@ -68,7 +68,7 @@
               "children": []
             },
             {
-              "id": "0beb9d6c-8656-4018-9a1a-bcb16db401e5",
+              "id": "36cbc2b3-12a2-4ab1-803d-10ca5307bf8c",
               "is_selected": true,
               "display_name": "latitude",
               "type": "warehouse_tables.column",
@@ -77,7 +77,7 @@
               "children": []
             },
             {
-              "id": "5488ca4a-8c56-4d79-b326-327eff87a0d4",
+              "id": "7d73b21a-85d4-447b-a46a-1be948f03b70",
               "is_selected": true,
               "display_name": "longitude",
               "type": "warehouse_tables.column",
@@ -86,7 +86,7 @@
               "children": []
             },
             {
-              "id": "841ca780-225d-40fa-99df-87cd41c1e311",
+              "id": "c15621b3-ab00-4fd8-9533-90c83df70464",
               "is_selected": true,
               "display_name": "state_abbreviation",
               "type": "warehouse_tables.column",
@@ -95,7 +95,7 @@
               "children": []
             },
             {
-              "id": "2944158c-b04b-4b94-ad5d-bfae0472bc73",
+              "id": "b586f1de-2d2b-42a2-9f3a-2cf1aa25eba0",
               "is_selected": true,
               "display_name": "zip_code",
               "type": "warehouse_tables.column",
@@ -106,14 +106,14 @@
           ]
         },
         {
-          "id": "57a6f2c5-e543-4231-b400-8cc9ef2b6cbe",
-          "is_selected": true,
+          "id": "7643265f-4fd9-43c9-97c4-8d337aa222f4",
+          "is_selected": false,
           "display_name": "customer",
           "type": "warehouse_tables.table",
           "description": null,
           "children": [
             {
-              "id": "f7e6c018-1b91-4efb-bed5-dd16b0eb0e2d",
+              "id": "6c5b89ff-00ba-4302-9564-554ac6a48445",
               "is_selected": true,
               "display_name": "billing_city",
               "type": "warehouse_tables.column",
@@ -122,7 +122,7 @@
               "children": []
             },
             {
-              "id": "0aef7162-b7d9-4df3-a2e5-4b46b3cd6c39",
+              "id": "79af8d37-6636-4928-9a6f-3336f4580486",
               "is_selected": true,
               "display_name": "billing_country",
               "type": "warehouse_tables.column",
@@ -131,7 +131,7 @@
               "children": []
             },
             {
-              "id": "f4c34910-eadd-4c50-9de1-f04118389be0",
+              "id": "daefe53c-3fcb-4d34-8776-f9f9da46d7ec",
               "is_selected": true,
               "display_name": "billing_state",
               "type": "warehouse_tables.column",
@@ -140,7 +140,7 @@
               "children": []
             },
             {
-              "id": "81110120-dd60-484c-ba9f-6bf92ef67ca9",
+              "id": "c17c14b6-a162-4b51-8c2e-f2d481e42d72",
               "is_selected": true,
               "display_name": "customer_ak",
               "type": "warehouse_tables.column",
@@ -149,7 +149,7 @@
               "children": []
             },
             {
-              "id": "bda3f4c9-65f7-412c-b76d-2d8a5564440e",
+              "id": "f0aa903a-455f-454c-8dfa-af73ff5c7065",
               "is_selected": true,
               "display_name": "customer_description",
               "type": "warehouse_tables.column",
@@ -158,7 +158,7 @@
               "children": []
             },
             {
-              "id": "82bc9a54-42e6-487b-a99c-0e93b6563bd3",
+              "id": "8dc50fe0-bd21-48b8-aff0-90d8ca89f80d",
               "is_selected": true,
               "display_name": "customer_name",
               "type": "warehouse_tables.column",
@@ -167,7 +167,7 @@
               "children": []
             },
             {
-              "id": "d285cd8c-2a5a-45b6-8250-4829309d73cd",
+              "id": "20bdfce4-5eec-47e6-8ca2-5343e8284e86",
               "is_selected": true,
               "display_name": "customer_sk",
               "type": "warehouse_tables.column",
@@ -176,7 +176,7 @@
               "children": []
             },
             {
-              "id": "ae853494-ca1d-4496-b898-7d409d34817b",
+              "id": "3f024398-cd03-4178-9086-07125cf67629",
               "is_selected": true,
               "display_name": "delivery_city",
               "type": "warehouse_tables.column",
@@ -185,7 +185,7 @@
               "children": []
             },
             {
-              "id": "057560d1-8aff-4a76-a3b2-03284ddc6c66",
+              "id": "22dc3146-36ff-413e-9344-ae9d40bb599b",
               "is_selected": true,
               "display_name": "delivery_country",
               "type": "warehouse_tables.column",
@@ -194,7 +194,7 @@
               "children": []
             },
             {
-              "id": "43ed1442-a014-48b3-944e-fa1f2bf67925",
+              "id": "ced634d6-2b7b-42b2-8959-ffe88debdf84",
               "is_selected": true,
               "display_name": "delivery_latitude",
               "type": "warehouse_tables.column",
@@ -203,7 +203,7 @@
               "children": []
             },
             {
-              "id": "15b34ebb-269f-4323-98af-fd7279d072ed",
+              "id": "7d0bf667-1ac7-439b-a505-123f04851ab1",
               "is_selected": true,
               "display_name": "delivery_longitude",
               "type": "warehouse_tables.column",
@@ -212,7 +212,7 @@
               "children": []
             },
             {
-              "id": "23fc90e9-25de-4ce0-a79b-b7995a88c02e",
+              "id": "9991d820-acb5-40e3-93c7-832614f38a20",
               "is_selected": true,
               "display_name": "delivery_state",
               "type": "warehouse_tables.column",
@@ -221,7 +221,7 @@
               "children": []
             },
             {
-              "id": "010dfde3-8e94-4ce6-b8d8-ed760d9bec8d",
+              "id": "be06c7c8-2aaa-4919-8d99-a2d46edabe81",
               "is_selected": true,
               "display_name": "delivery_zip_code",
               "type": "warehouse_tables.column",
@@ -230,7 +230,7 @@
               "children": []
             },
             {
-              "id": "00242c2b-5a2a-4358-94f5-f5abbe2ce46d",
+              "id": "40bf987c-f1a6-4f74-9ac3-73a5f1274ba0",
               "is_selected": true,
               "display_name": "end_date",
               "type": "warehouse_tables.column",
@@ -239,7 +239,7 @@
               "children": []
             },
             {
-              "id": "2338511c-6354-4039-baf2-53e996dd5111",
+              "id": "516a7b6b-bdf1-4603-b588-5bf95e9d1847",
               "is_selected": true,
               "display_name": "primary_contact_email",
               "type": "warehouse_tables.column",
@@ -248,7 +248,7 @@
               "children": []
             },
             {
-              "id": "437f96ee-be07-4dee-bd01-8f21d6bf905a",
+              "id": "d4f87ba7-1535-48cc-8ad2-6b87f23c0a11",
               "is_selected": true,
               "display_name": "primary_contact_first_name",
               "type": "warehouse_tables.column",
@@ -257,7 +257,7 @@
               "children": []
             },
             {
-              "id": "f920117e-30c9-462e-ae38-49cab77e6b1a",
+              "id": "553cebf3-820c-455b-8eed-5f2f17f43bf7",
               "is_selected": true,
               "display_name": "primary_contact_last_name",
               "type": "warehouse_tables.column",
@@ -266,7 +266,7 @@
               "children": []
             },
             {
-              "id": "13856dc2-3151-4476-9efa-584e0f8d7cd4",
+              "id": "5834cee7-1c9a-4b65-8c98-a4f240ae74e4",
               "is_selected": true,
               "display_name": "primary_contact_phone",
               "type": "warehouse_tables.column",
@@ -275,7 +275,7 @@
               "children": []
             },
             {
-              "id": "90aaabda-c7a4-4fdc-80ba-1074c5533f9a",
+              "id": "e132115c-bc0e-454c-814f-7d5125c6a3f3",
               "is_selected": true,
               "display_name": "start_date",
               "type": "warehouse_tables.column",
@@ -286,14 +286,14 @@
           ]
         },
         {
-          "id": "d01ea63a-8ce3-4451-91aa-7b59f2c85ab7",
-          "is_selected": true,
+          "id": "c56eda78-c08a-4e8d-b1fd-d012fd81d088",
+          "is_selected": false,
           "display_name": "date",
           "type": "warehouse_tables.table",
           "description": null,
           "children": [
             {
-              "id": "d4526f3a-44f4-4e78-a761-41d4f7521a72",
+              "id": "de5f3b8d-7c5c-49ff-a126-0430af27805b",
               "is_selected": true,
               "display_name": "date",
               "type": "warehouse_tables.column",
@@ -302,7 +302,7 @@
               "children": []
             },
             {
-              "id": "ae4855ba-bb0d-4dea-9dd4-076133cc55e9",
+              "id": "5f262ec6-ec94-4aa8-9295-9b6004ff4f04",
               "is_selected": true,
               "display_name": "date_sk",
               "type": "warehouse_tables.column",
@@ -311,7 +311,7 @@
               "children": []
             },
             {
-              "id": "ff56ee06-9749-4479-96af-1c6032d0e040",
+              "id": "0bf19cc9-fdf1-48c4-ace9-f307a8b042d4",
               "is_selected": true,
               "display_name": "day_number",
               "type": "warehouse_tables.column",
@@ -320,7 +320,7 @@
               "children": []
             },
             {
-              "id": "1605a1c2-cf61-4400-a257-af18ffb5cd29",
+              "id": "95ce5c5d-ee77-4589-8b5b-01a544e9699a",
               "is_selected": true,
               "display_name": "day_of_week",
               "type": "warehouse_tables.column",
@@ -329,7 +329,7 @@
               "children": []
             },
             {
-              "id": "40a12896-4684-4ab5-85ad-22068834689a",
+              "id": "79627b63-289e-4e31-bc17-cdb95a553bf2",
               "is_selected": true,
               "display_name": "month_name",
               "type": "warehouse_tables.column",
@@ -338,7 +338,7 @@
               "children": []
             },
             {
-              "id": "9977cb31-8e2c-493b-9e45-ab43226709de",
+              "id": "5097026a-a527-4e59-9630-b77d9b5c8c72",
               "is_selected": true,
               "display_name": "month_number",
               "type": "warehouse_tables.column",
@@ -347,7 +347,7 @@
               "children": []
             },
             {
-              "id": "e12753b4-7063-4990-ab09-de32a1aa1b95",
+              "id": "c93a5a46-701d-4387-bfd4-5d77ae2ad4a8",
               "is_selected": true,
               "display_name": "quarter",
               "type": "warehouse_tables.column",
@@ -356,7 +356,7 @@
               "children": []
             },
             {
-              "id": "2b734892-0707-4605-ad55-b4f28d42544f",
+              "id": "43b63d12-6106-4f3d-8748-414c7d4d91d0",
               "is_selected": true,
               "display_name": "year",
               "type": "warehouse_tables.column",
@@ -367,14 +367,14 @@
           ]
         },
         {
-          "id": "50249797-84ef-4ba9-a507-1f2d86bd73aa",
+          "id": "679335b4-73c8-4584-9b23-4935dce210b1",
           "is_selected": false,
           "display_name": "facility",
           "type": "warehouse_tables.table",
           "description": null,
           "children": [
             {
-              "id": "770f025e-d1a7-4897-a1a3-1d7e4271c425",
+              "id": "c8412169-5275-4548-a291-41ef7581054b",
               "is_selected": true,
               "display_name": "address",
               "type": "warehouse_tables.column",
@@ -383,7 +383,7 @@
               "children": []
             },
             {
-              "id": "a4363fb8-ca1d-4475-9bc3-62abb599fb66",
+              "id": "b0e7d265-7154-4349-a094-6df4501d07d2",
               "is_selected": true,
               "display_name": "city",
               "type": "warehouse_tables.column",
@@ -392,7 +392,7 @@
               "children": []
             },
             {
-              "id": "37999db3-a66f-4591-ac8a-162a42d28df1",
+              "id": "23835bd7-a8e3-4679-968a-100810d05e7a",
               "is_selected": true,
               "display_name": "country",
               "type": "warehouse_tables.column",
@@ -401,7 +401,7 @@
               "children": []
             },
             {
-              "id": "ed423c3e-057a-4726-85ff-0ebf6576519a",
+              "id": "afda731b-b900-4d09-9ffd-38a4f20cfa76",
               "is_selected": true,
               "display_name": "end_date",
               "type": "warehouse_tables.column",
@@ -410,7 +410,7 @@
               "children": []
             },
             {
-              "id": "d39be1e4-799b-485a-958d-23071a1d95a4",
+              "id": "2dd340de-6a9a-4566-a6b9-22b034827c6f",
               "is_selected": true,
               "display_name": "facility_ak",
               "type": "warehouse_tables.column",
@@ -419,7 +419,7 @@
               "children": []
             },
             {
-              "id": "7d49a4a1-0cdb-4b60-bfe0-136b20fb9785",
+              "id": "36fcae24-7bd1-45ff-af18-6fbc558191fa",
               "is_selected": true,
               "display_name": "facility_name",
               "type": "warehouse_tables.column",
@@ -428,7 +428,7 @@
               "children": []
             },
             {
-              "id": "493fbb4b-41b7-481b-b610-85c6d7384895",
+              "id": "ae253c9b-fdce-4032-ad5e-b08b17737905",
               "is_selected": true,
               "display_name": "facility_sk",
               "type": "warehouse_tables.column",
@@ -437,7 +437,7 @@
               "children": []
             },
             {
-              "id": "4420dff0-8259-468c-b37c-71d7de0d654a",
+              "id": "d01fc826-7572-4507-8906-5e4e6d234921",
               "is_selected": true,
               "display_name": "facility_type",
               "type": "warehouse_tables.column",
@@ -446,7 +446,7 @@
               "children": []
             },
             {
-              "id": "57eb3a58-347a-433b-97d0-bfd683e92bbf",
+              "id": "31b61ec0-b0a8-406f-961d-89e4f2e8798c",
               "is_selected": true,
               "display_name": "latitude",
               "type": "warehouse_tables.column",
@@ -455,7 +455,7 @@
               "children": []
             },
             {
-              "id": "3f9f56f0-d709-4436-9ed4-511f7457e7af",
+              "id": "83138fb7-4f9d-4fd4-b29a-5459b76d997b",
               "is_selected": true,
               "display_name": "longitude",
               "type": "warehouse_tables.column",
@@ -464,7 +464,7 @@
               "children": []
             },
             {
-              "id": "fd2c6fe8-ab7c-4e0f-9cb6-c26586666a66",
+              "id": "4fac2b32-6b2c-468b-95b1-dd409fe90921",
               "is_selected": true,
               "display_name": "start_date",
               "type": "warehouse_tables.column",
@@ -473,7 +473,7 @@
               "children": []
             },
             {
-              "id": "adb9a382-a969-4fc7-b474-5893ecaa0992",
+              "id": "8d185585-eb37-4482-879b-71a33bbf5638",
               "is_selected": true,
               "display_name": "state_abbreviation",
               "type": "warehouse_tables.column",
@@ -482,7 +482,7 @@
               "children": []
             },
             {
-              "id": "bd2fb762-6f37-4415-ba59-eda84d713d3a",
+              "id": "1de06b9a-e3ee-42c7-80b2-93691a5c34c0",
               "is_selected": true,
               "display_name": "zip_code",
               "type": "warehouse_tables.column",
@@ -493,14 +493,14 @@
           ]
         },
         {
-          "id": "d2ca29ee-3ff9-44b2-8db5-d4e9cfd910f7",
-          "is_selected": true,
+          "id": "9698d6d2-6d14-4d77-a201-7eec7c34403a",
+          "is_selected": false,
           "display_name": "item",
           "type": "warehouse_tables.table",
           "description": null,
           "children": [
             {
-              "id": "57094ddd-ea0a-414e-a161-af880e7dc601",
+              "id": "ace83fd4-d844-4bfc-9279-26ade262906f",
               "is_selected": true,
               "display_name": "brand",
               "type": "warehouse_tables.column",
@@ -509,7 +509,7 @@
               "children": []
             },
             {
-              "id": "836dfb3e-2a23-477f-ac5b-6bae63729fcf",
+              "id": "ca651134-ee53-4221-bd81-f442bafdb325",
               "is_selected": true,
               "display_name": "category",
               "type": "warehouse_tables.column",
@@ -518,7 +518,7 @@
               "children": []
             },
             {
-              "id": "ad7e20c4-f7c8-4143-bbd5-50b985cc1a50",
+              "id": "fb6797e2-aa3c-49f7-8d75-29fbadc274f1",
               "is_selected": true,
               "display_name": "cost",
               "type": "warehouse_tables.column",
@@ -527,7 +527,7 @@
               "children": []
             },
             {
-              "id": "b2062059-8ea9-4c7e-aabe-fdd19a0d6d90",
+              "id": "442db69c-748c-4732-a91e-c230f828a070",
               "is_selected": true,
               "display_name": "end_connection",
               "type": "warehouse_tables.column",
@@ -536,7 +536,7 @@
               "children": []
             },
             {
-              "id": "d801b41a-6e13-431e-85a3-36e431ebadf8",
+              "id": "e5e1da99-6fcc-48db-a754-0df79b21dbb1",
               "is_selected": true,
               "display_name": "end_date",
               "type": "warehouse_tables.column",
@@ -545,7 +545,7 @@
               "children": []
             },
             {
-              "id": "0ff3cb78-94dc-46fc-aae0-67eb7e491d3a",
+              "id": "df2dcd27-1ef0-4c82-aca9-d77546cfdeaa",
               "is_selected": true,
               "display_name": "is_sdofcertified",
               "type": "warehouse_tables.column",
@@ -554,7 +554,7 @@
               "children": []
             },
             {
-              "id": "4607cfc4-6954-44cd-8be3-0b25ca3f82e3",
+              "id": "e655db7e-8a6e-4980-a1a9-a97c9258e340",
               "is_selected": true,
               "display_name": "item_ak",
               "type": "warehouse_tables.column",
@@ -563,7 +563,7 @@
               "children": []
             },
             {
-              "id": "5b2f5da0-ff4a-462c-9580-743629b85de4",
+              "id": "d1e0578d-cc7b-4535-b3e9-c9d1a9b8c001",
               "is_selected": true,
               "display_name": "item_description",
               "type": "warehouse_tables.column",
@@ -572,7 +572,7 @@
               "children": []
             },
             {
-              "id": "b67c4a44-9bd1-41b3-b22d-edf84fea5742",
+              "id": "1e0f4dff-446f-462f-bda0-b76edb0f4dc5",
               "is_selected": true,
               "display_name": "item_sk",
               "type": "warehouse_tables.column",
@@ -581,7 +581,7 @@
               "children": []
             },
             {
-              "id": "7c6a2f4f-7b95-49a7-bf7b-c4bac8029c0b",
+              "id": "7cf9c38d-b443-4981-b2dc-42b354439d58",
               "is_selected": true,
               "display_name": "list_price",
               "type": "warehouse_tables.column",
@@ -590,7 +590,7 @@
               "children": []
             },
             {
-              "id": "5c3e2678-aa12-4d02-a6b9-75fb9a928786",
+              "id": "cd2a871a-4162-419d-964f-154729401c69",
               "is_selected": true,
               "display_name": "material",
               "type": "warehouse_tables.column",
@@ -599,7 +599,7 @@
               "children": []
             },
             {
-              "id": "7bccb8d9-7ca3-4efa-80fb-a2a6aa295d93",
+              "id": "f841dfe1-4eab-4e6f-976e-acc228b48f05",
               "is_selected": true,
               "display_name": "nominal_size",
               "type": "warehouse_tables.column",
@@ -608,7 +608,7 @@
               "children": []
             },
             {
-              "id": "28bfd6d4-6aca-47b4-a847-4cec358a8708",
+              "id": "133baedd-44f6-4e0e-b190-505ba807756d",
               "is_selected": true,
               "display_name": "pressure_class",
               "type": "warehouse_tables.column",
@@ -617,7 +617,7 @@
               "children": []
             },
             {
-              "id": "ee8b5dd0-4243-4bfc-a12d-c9bf9b8f1bd5",
+              "id": "d35a682a-2bc0-408c-9a98-98b37bd13ad5",
               "is_selected": true,
               "display_name": "sku",
               "type": "warehouse_tables.column",
@@ -626,7 +626,7 @@
               "children": []
             },
             {
-              "id": "ca1dbcbc-ac6f-4bf4-8077-eb66d8134429",
+              "id": "e794c4de-48ec-497f-baef-5a1b3a3009d2",
               "is_selected": true,
               "display_name": "span_rating",
               "type": "warehouse_tables.column",
@@ -635,7 +635,7 @@
               "children": []
             },
             {
-              "id": "b0427661-3026-424d-b349-643f98c0d556",
+              "id": "b04d9be4-3977-4622-811f-15de073d4f77",
               "is_selected": true,
               "display_name": "start_date",
               "type": "warehouse_tables.column",
@@ -644,7 +644,7 @@
               "children": []
             },
             {
-              "id": "22cd7cad-3025-48d4-85ad-1a0afce201a8",
+              "id": "7bcd0840-72a5-4365-b641-217d49bbc554",
               "is_selected": true,
               "display_name": "structural_index",
               "type": "warehouse_tables.column",
@@ -653,7 +653,7 @@
               "children": []
             },
             {
-              "id": "f5a50223-dbb4-42a8-9534-f2d7f99948f0",
+              "id": "7c45e559-b2d7-47ba-9f87-6ccfc990cfec",
               "is_selected": true,
               "display_name": "subcategory",
               "type": "warehouse_tables.column",
@@ -662,7 +662,7 @@
               "children": []
             },
             {
-              "id": "244639c8-a634-4e6e-9d44-18b3e1dbe81b",
+              "id": "f38d1f2e-3e9d-4bf3-b611-28342563fb94",
               "is_selected": true,
               "display_name": "weight",
               "type": "warehouse_tables.column",
@@ -673,14 +673,14 @@
           ]
         },
         {
-          "id": "1df8a722-c844-47b2-b3e6-c95422326c50",
-          "is_selected": true,
+          "id": "4dc6856e-b336-49af-9a4a-ed6a9947c8af",
+          "is_selected": false,
           "display_name": "order_source",
           "type": "warehouse_tables.table",
           "description": null,
           "children": [
             {
-              "id": "914da60c-b1ed-4d6d-a689-4214d63a2b10",
+              "id": "1340a3d4-9daa-4ba4-97b6-79a33b7018e1",
               "is_selected": true,
               "display_name": "end_date",
               "type": "warehouse_tables.column",
@@ -689,7 +689,7 @@
               "children": []
             },
             {
-              "id": "78c8d922-03a1-44ec-89a0-0a4eb5e7b1f5",
+              "id": "0ae455aa-0d8e-42a1-90df-8a44694770fe",
               "is_selected": true,
               "display_name": "order_source_ak",
               "type": "warehouse_tables.column",
@@ -698,7 +698,7 @@
               "children": []
             },
             {
-              "id": "40f773c9-5b5e-4761-bbc8-e2cf395db140",
+              "id": "2bad4415-9169-4509-bf76-6b234d0b8ee8",
               "is_selected": true,
               "display_name": "order_source_name",
               "type": "warehouse_tables.column",
@@ -707,7 +707,7 @@
               "children": []
             },
             {
-              "id": "21330723-abac-4c1f-9ba0-db935801a929",
+              "id": "d0949514-9287-408f-83ed-d0271cf8e2f9",
               "is_selected": true,
               "display_name": "order_source_sk",
               "type": "warehouse_tables.column",
@@ -716,7 +716,7 @@
               "children": []
             },
             {
-              "id": "c7ad4816-971e-4cb3-8a4a-e6b58a55abf1",
+              "id": "b8b8b721-4705-4150-bf6b-ddfebb3e8ca1",
               "is_selected": true,
               "display_name": "start_date",
               "type": "warehouse_tables.column",
@@ -729,21 +729,21 @@
       ]
     },
     {
-      "id": "e94bd26e-ed3f-4c1a-803c-cfdc46313f5b",
+      "id": "19cc5c74-d9b5-4550-97a5-fbe462a7a9b0",
       "is_selected": false,
       "display_name": "fact",
       "type": "warehouse_tables.schema",
       "description": null,
       "children": [
         {
-          "id": "47522dea-585a-477d-a0cc-a1ae73779c39",
-          "is_selected": true,
+          "id": "0cff4c74-f3f6-48ce-a8b7-482fc8536141",
+          "is_selected": false,
           "display_name": "order",
           "type": "warehouse_tables.table",
           "description": null,
           "children": [
             {
-              "id": "ff7f4c48-8317-41ec-be31-17263634cba2",
+              "id": "82fe89c1-c401-439d-bd01-75cf3d0a72b8",
               "is_selected": true,
               "display_name": "customer_sk",
               "type": "warehouse_tables.column",
@@ -752,7 +752,7 @@
               "children": []
             },
             {
-              "id": "9580ce73-6791-41dc-aab8-8d8868181cdd",
+              "id": "2964d5f4-0212-4c4b-adad-7d477ea171da",
               "is_selected": true,
               "display_name": "extended_price",
               "type": "warehouse_tables.column",
@@ -761,7 +761,7 @@
               "children": []
             },
             {
-              "id": "fab04413-0f0b-4ed4-8888-de715d0bf893",
+              "id": "20ca4ffa-7314-4fd5-8f48-1f7ecf478241",
               "is_selected": true,
               "display_name": "item_sk",
               "type": "warehouse_tables.column",
@@ -770,7 +770,7 @@
               "children": []
             },
             {
-              "id": "b5065fe2-a882-4fc7-8a99-cef1f2466a99",
+              "id": "3bfd5b46-f0da-4587-8a64-ec376a0d7f18",
               "is_selected": true,
               "display_name": "net_weight",
               "type": "warehouse_tables.column",
@@ -779,7 +779,7 @@
               "children": []
             },
             {
-              "id": "85e7e351-233c-43f4-8537-5102e5a6687e",
+              "id": "311c906b-93d6-48b2-97c1-713f688b8e6d",
               "is_selected": true,
               "display_name": "order_date_sk",
               "type": "warehouse_tables.column",
@@ -788,7 +788,7 @@
               "children": []
             },
             {
-              "id": "c8e8e9ff-9a71-41bd-b566-0b7d745dceba",
+              "id": "fe6c4c51-008b-454c-b00e-096345dab4d4",
               "is_selected": true,
               "display_name": "order_line_number",
               "type": "warehouse_tables.column",
@@ -797,7 +797,7 @@
               "children": []
             },
             {
-              "id": "867c9a22-f315-418a-add4-2111bfc47957",
+              "id": "2450e229-4cb1-4b49-9e71-896e31280acb",
               "is_selected": true,
               "display_name": "order_number",
               "type": "warehouse_tables.column",
@@ -806,7 +806,7 @@
               "children": []
             },
             {
-              "id": "183cf93c-d32c-4060-ae38-a7a1e0789787",
+              "id": "d179c79d-1e45-4328-9e8f-5d1de7443f51",
               "is_selected": true,
               "display_name": "order_sk",
               "type": "warehouse_tables.column",
@@ -815,7 +815,7 @@
               "children": []
             },
             {
-              "id": "5efc518c-1467-4ba5-ad28-ca8f2ffaecb2",
+              "id": "d334720e-c273-4df0-9a55-4e53e3113931",
               "is_selected": true,
               "display_name": "order_source_sk",
               "type": "warehouse_tables.column",
@@ -824,7 +824,7 @@
               "children": []
             },
             {
-              "id": "65ede312-f553-4382-9ae1-01c29d33835a",
+              "id": "633ec959-4750-410a-a61e-17c2ef13e7d2",
               "is_selected": true,
               "display_name": "quantity",
               "type": "warehouse_tables.column",
@@ -833,7 +833,7 @@
               "children": []
             },
             {
-              "id": "a59ac581-99b8-41ca-aa2e-35e07c3c6df3",
+              "id": "d6207e15-00fb-496c-adc1-fa867789a0da",
               "is_selected": true,
               "display_name": "unit_price",
               "type": "warehouse_tables.column",
@@ -842,7 +842,7 @@
               "children": []
             },
             {
-              "id": "0beb7073-99b8-47a9-b641-817932cd158f",
+              "id": "11d0f07f-f1ef-4649-9bef-e4d84822a7e6",
               "is_selected": true,
               "display_name": "warranty_included",
               "type": "warehouse_tables.column",
@@ -853,14 +853,14 @@
           ]
         },
         {
-          "id": "bf90a7d8-d30c-48d4-a302-9c79a60ce387",
-          "is_selected": true,
+          "id": "f0fd7e5f-fb42-4fa5-ac52-dc4a74e68e5e",
+          "is_selected": false,
           "display_name": "shipment",
           "type": "warehouse_tables.table",
           "description": null,
           "children": [
             {
-              "id": "de0ba316-d5c2-4454-bbaf-a6e7aa4a77f0",
+              "id": "6237dba5-10de-486b-bd39-a0437dabe8fb",
               "is_selected": true,
               "display_name": "committed_delivery_date_sk",
               "type": "warehouse_tables.column",
@@ -869,7 +869,7 @@
               "children": []
             },
             {
-              "id": "f1df50be-584f-48e2-a278-f2f6cc71b25d",
+              "id": "89e94362-9b0a-4740-aa37-06e7ef73b0cb",
               "is_selected": true,
               "display_name": "customer_sk",
               "type": "warehouse_tables.column",
@@ -878,7 +878,7 @@
               "children": []
             },
             {
-              "id": "f480d51d-7315-425c-aa33-3a4ea24486cc",
+              "id": "9cae5bbe-22ae-4299-84c6-384d1072be28",
               "is_selected": true,
               "display_name": "declared_value",
               "type": "warehouse_tables.column",
@@ -887,7 +887,7 @@
               "children": []
             },
             {
-              "id": "41021386-fb7c-47b7-9161-425b946d8aa8",
+              "id": "bc02071f-96d9-46b2-aa5e-e70fa6f7ca83",
               "is_selected": true,
               "display_name": "delivery_date_sk",
               "type": "warehouse_tables.column",
@@ -896,7 +896,7 @@
               "children": []
             },
             {
-              "id": "303a3560-80a6-4c35-8971-d8a79c59d9f6",
+              "id": "30109ee9-524a-41fc-a3ef-ef47c9c0d5d4",
               "is_selected": true,
               "display_name": "delivery_days_late",
               "type": "warehouse_tables.column",
@@ -905,7 +905,7 @@
               "children": []
             },
             {
-              "id": "c3b64ea1-4b0f-49ab-a5e5-dabb361e6279",
+              "id": "9466df0c-ad9e-44df-a1ec-8401f3e26f13",
               "is_selected": true,
               "display_name": "destination_address_sk",
               "type": "warehouse_tables.column",
@@ -914,7 +914,7 @@
               "children": []
             },
             {
-              "id": "c4623633-d392-4d2c-b9b5-f0206a57e09e",
+              "id": "4a45b986-f807-4a8b-96b6-0b32f3e722b1",
               "is_selected": true,
               "display_name": "height",
               "type": "warehouse_tables.column",
@@ -923,7 +923,7 @@
               "children": []
             },
             {
-              "id": "4a297065-014f-418a-8cc4-1d41c97e1ff6",
+              "id": "714b53b9-0270-47af-8881-50766b84707f",
               "is_selected": true,
               "display_name": "is_fragile",
               "type": "warehouse_tables.column",
@@ -932,7 +932,7 @@
               "children": []
             },
             {
-              "id": "748eccf5-38c4-4d26-99f5-41f745a62917",
+              "id": "feb61a6b-9347-4d26-986a-428737b899ca",
               "is_selected": true,
               "display_name": "is_hazardous",
               "type": "warehouse_tables.column",
@@ -941,7 +941,7 @@
               "children": []
             },
             {
-              "id": "3dc47f43-37ca-414c-9e23-a6f7c1d7fb64",
+              "id": "e0d049fb-00b8-4428-afbf-2ab86ca96742",
               "is_selected": true,
               "display_name": "late_delivery_penalty",
               "type": "warehouse_tables.column",
@@ -950,7 +950,7 @@
               "children": []
             },
             {
-              "id": "d2c1bd68-c231-481f-8c2b-84d22accb151",
+              "id": "3ea9eaaa-b1a1-4c95-abe7-804b399878ad",
               "is_selected": true,
               "display_name": "late_delivery_penalty_per_day",
               "type": "warehouse_tables.column",
@@ -959,7 +959,7 @@
               "children": []
             },
             {
-              "id": "1e8cfe0f-e3bf-4493-9573-f70fca646410",
+              "id": "fad2b7f1-b739-42b6-a819-dc75594d19dd",
               "is_selected": true,
               "display_name": "length",
               "type": "warehouse_tables.column",
@@ -968,7 +968,7 @@
               "children": []
             },
             {
-              "id": "961fafa7-2b38-4611-ac1f-6ed45dca6065",
+              "id": "49907df6-f587-4bd3-93f8-1b4d5d7dd058",
               "is_selected": true,
               "display_name": "order_number",
               "type": "warehouse_tables.column",
@@ -977,7 +977,7 @@
               "children": []
             },
             {
-              "id": "38e6bcac-7ac1-4d2d-8d72-2726ffceee7b",
+              "id": "dc88eb52-6261-475f-b9d3-6c7ac6ac9bf7",
               "is_selected": true,
               "display_name": "origin_address_sk",
               "type": "warehouse_tables.column",
@@ -986,7 +986,7 @@
               "children": []
             },
             {
-              "id": "47307c32-ea4d-4628-802f-68009ee8cd5f",
+              "id": "fcd56a0a-665d-405f-a485-04148e3bd144",
               "is_selected": true,
               "display_name": "requires_refrigeration",
               "type": "warehouse_tables.column",
@@ -995,7 +995,7 @@
               "children": []
             },
             {
-              "id": "f560d66f-c3a3-4701-88e9-abb369d13290",
+              "id": "3cd1e328-ad09-48d0-8b31-1bf221c8c576",
               "is_selected": true,
               "display_name": "service_level",
               "type": "warehouse_tables.column",
@@ -1004,7 +1004,7 @@
               "children": []
             },
             {
-              "id": "12697a98-6212-40cc-84ca-f8e072880d24",
+              "id": "c1b118d9-90dd-46f1-9c56-d3b022c05856",
               "is_selected": true,
               "display_name": "ship_date_sk",
               "type": "warehouse_tables.column",
@@ -1013,7 +1013,7 @@
               "children": []
             },
             {
-              "id": "3dac8793-df24-464f-9028-52577e8c9259",
+              "id": "2438b64d-283a-420b-8d91-b50388bc8bd8",
               "is_selected": true,
               "display_name": "shipment_distance",
               "type": "warehouse_tables.column",
@@ -1022,7 +1022,7 @@
               "children": []
             },
             {
-              "id": "95534e28-d8cb-447c-86a7-829bd797bdec",
+              "id": "fe65848b-a167-4ea8-b822-eb4fb9c79dc6",
               "is_selected": true,
               "display_name": "shipment_sk",
               "type": "warehouse_tables.column",
@@ -1031,7 +1031,7 @@
               "children": []
             },
             {
-              "id": "9b9bc171-6c77-4949-a5a9-c6feb7fb4558",
+              "id": "5cbd3f6a-a673-45d4-bd9a-ba4b6d894322",
               "is_selected": true,
               "display_name": "tracking_number",
               "type": "warehouse_tables.column",
@@ -1040,7 +1040,7 @@
               "children": []
             },
             {
-              "id": "2e6fa748-07cc-4516-aad4-7ecdc75877f0",
+              "id": "8e6488c6-6af5-4346-a2e9-b128d3cd6f8c",
               "is_selected": true,
               "display_name": "volume",
               "type": "warehouse_tables.column",
@@ -1049,7 +1049,7 @@
               "children": []
             },
             {
-              "id": "5f4326fb-b209-427e-81eb-a3354be86beb",
+              "id": "2dd4fc13-39e4-42af-b4c1-c9fe4cf4fb5e",
               "is_selected": true,
               "display_name": "weight",
               "type": "warehouse_tables.column",
@@ -1058,7 +1058,7 @@
               "children": []
             },
             {
-              "id": "58c33827-9a86-4048-a431-c541e0384393",
+              "id": "a53fe1b0-35d6-4b68-8f6f-946adaace5da",
               "is_selected": true,
               "display_name": "width",
               "type": "warehouse_tables.column",
@@ -1071,21 +1071,21 @@
       ]
     },
     {
-      "id": "6273938a-761b-4458-8f5e-7fe201c3c3a4",
+      "id": "00b4e64c-681b-4300-bc1e-e4d2783c6cd4",
       "is_selected": false,
       "display_name": "dbo",
       "type": "warehouse_tables.schema",
       "description": null,
       "children": [
         {
-          "id": "ec89a875-4435-4a50-94e1-269587f75788",
+          "id": "9d34aa7d-dc91-4562-b3ba-793761c9d22b",
           "is_selected": false,
           "display_name": "CopyIntoExample",
           "type": "warehouse_tables.table",
           "description": null,
           "children": [
             {
-              "id": "f871808d-3ce4-453f-b751-fb9ce95a4a42",
+              "id": "dfd02362-cbdf-4eb2-8980-2af4c42a1691",
               "is_selected": true,
               "display_name": "CalendarMonthLabel",
               "type": "warehouse_tables.column",
@@ -1094,7 +1094,7 @@
               "children": []
             },
             {
-              "id": "0daf612d-9bd3-40cf-8c4b-9ff2c7422944",
+              "id": "19aa8d45-2a88-46b8-9e56-43c1aaf6dc07",
               "is_selected": true,
               "display_name": "CalendarMonthNumber",
               "type": "warehouse_tables.column",
@@ -1103,7 +1103,7 @@
               "children": []
             },
             {
-              "id": "8179f2f9-910c-4698-8191-b94a8c559606",
+              "id": "304e2ce5-732a-4f55-88b9-77bcf92f3071",
               "is_selected": true,
               "display_name": "CalendarYear",
               "type": "warehouse_tables.column",
@@ -1112,7 +1112,7 @@
               "children": []
             },
             {
-              "id": "c34a0725-1e32-4b5a-a02d-8eab91dc6f80",
+              "id": "6ee69870-edac-4695-a175-ec836a239594",
               "is_selected": true,
               "display_name": "CalendarYearLabel",
               "type": "warehouse_tables.column",
@@ -1121,7 +1121,7 @@
               "children": []
             },
             {
-              "id": "76ede746-9125-41a2-bcd4-6193cb3c6c76",
+              "id": "a8ff1618-9ef8-4644-8eb7-ae0af1d30a3b",
               "is_selected": true,
               "display_name": "Date",
               "type": "warehouse_tables.column",
@@ -1130,7 +1130,7 @@
               "children": []
             },
             {
-              "id": "df6f3c8b-d232-4d16-9713-f0c02e16836b",
+              "id": "38e535c7-1a69-40d7-9f87-3174039e1697",
               "is_selected": true,
               "display_name": "Day",
               "type": "warehouse_tables.column",
@@ -1139,7 +1139,7 @@
               "children": []
             },
             {
-              "id": "d821b100-62f1-4dcd-9ec1-b0964ae7a0e8",
+              "id": "b58be1ca-5868-470b-a2a2-d804e2cdbd33",
               "is_selected": true,
               "display_name": "DayNumber",
               "type": "warehouse_tables.column",
@@ -1148,7 +1148,7 @@
               "children": []
             },
             {
-              "id": "feea81a1-f732-462c-adb3-275f13d6e3d3",
+              "id": "36ea5021-18bc-412a-ae2f-7949df884e8b",
               "is_selected": true,
               "display_name": "FiscalMonthLabel",
               "type": "warehouse_tables.column",
@@ -1157,7 +1157,7 @@
               "children": []
             },
             {
-              "id": "e0136b4e-5c4e-4102-b97b-e8560b4ae953",
+              "id": "20fe8671-4b83-4be6-8c1e-2a1190e9da05",
               "is_selected": true,
               "display_name": "FiscalMonthNumber",
               "type": "warehouse_tables.column",
@@ -1166,7 +1166,7 @@
               "children": []
             },
             {
-              "id": "6f68f419-e5f9-4d16-bfd4-e69a90eddf6c",
+              "id": "4e0288a6-5e64-4f07-9b7c-3c4b2e5e45c1",
               "is_selected": true,
               "display_name": "FiscalYear",
               "type": "warehouse_tables.column",
@@ -1175,7 +1175,7 @@
               "children": []
             },
             {
-              "id": "8317d9aa-b6c1-476a-97b7-33ac8352e937",
+              "id": "2caeeb46-36da-4895-bb2c-8452e9f1ce45",
               "is_selected": true,
               "display_name": "FiscalYearLabel",
               "type": "warehouse_tables.column",
@@ -1184,7 +1184,7 @@
               "children": []
             },
             {
-              "id": "4ce1a102-54e0-45ef-9f0f-79f1f0701591",
+              "id": "e3692eba-126e-4634-a3e5-1d8ff75c00e1",
               "is_selected": true,
               "display_name": "ISOWeekNumber",
               "type": "warehouse_tables.column",
@@ -1193,7 +1193,7 @@
               "children": []
             },
             {
-              "id": "3ad7b608-d579-4aaa-b8d2-69b35a4cec47",
+              "id": "e8d2943b-8b33-4fb4-9570-e0d323a8e3b1",
               "is_selected": true,
               "display_name": "Month",
               "type": "warehouse_tables.column",
@@ -1202,7 +1202,7 @@
               "children": []
             },
             {
-              "id": "8ec04c22-8fa5-4207-9122-36916ad9f90a",
+              "id": "4536a4c1-4ce6-49bb-aeb3-cf388ca105ff",
               "is_selected": true,
               "display_name": "ShortMonth",
               "type": "warehouse_tables.column",
@@ -1213,14 +1213,14 @@
           ]
         },
         {
-          "id": "4106fc62-c8a4-43a2-90fe-b5f2a1699e76",
+          "id": "04c16de5-d7db-46d5-987e-4c90c418e223",
           "is_selected": false,
           "display_name": "etl_tracking",
           "type": "warehouse_tables.table",
           "description": null,
           "children": [
             {
-              "id": "56fc72b8-6e4c-475d-87da-dbe6903486a6",
+              "id": "850f4560-efe2-49f7-a8aa-2a337b14847e",
               "is_selected": true,
               "display_name": "etl_tracking_id",
               "type": "warehouse_tables.column",
@@ -1229,7 +1229,7 @@
               "children": []
             },
             {
-              "id": "47e8dd73-cd1d-4f94-a571-910189051182",
+              "id": "a2c1e48c-7bc8-4875-9ad1-b800bfe45e31",
               "is_selected": true,
               "display_name": "last_load_datetime",
               "type": "warehouse_tables.column",
@@ -1238,7 +1238,7 @@
               "children": []
             },
             {
-              "id": "d955c02f-b46b-4eb1-a7ab-cda29a776370",
+              "id": "d5a140bf-b7ae-4b69-b1df-5b51931e0731",
               "is_selected": true,
               "display_name": "table_name",
               "type": "warehouse_tables.column",

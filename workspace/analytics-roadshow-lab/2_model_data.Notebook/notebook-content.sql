@@ -25,9 +25,9 @@
 --   <table style="border: none; margin: 0; padding: 0; border-collapse: collapse;">
 --     <tr>
 --       <td style="border: none; vertical-align: middle; text-align: left; padding: 0; margin: 0;">
---         <img src="https://github.com/microsoft/fabric-analytics-roadshow-lab/blob/initial-version-prep/assets/images/spark/analytics.png?raw=true" width="140" />
+--         <img src="https://github.com/microsoft/fabric-analytics-roadshow-lab/blob/main/assets/images/warehouse/fabric-data-warehouse-icon.png?raw=true" width="140" />
 --       </td>
---       <td style="border: none; vertical-align: middle; padding-left: 0px; text-align: left; padding-right: 0; padding-top: 0; padding-bottom: 0;">
+--       <td style="border: none; vertical-align: middle; padding-left: 30px; text-align: left; padding-right: 0; padding-top: 0; padding-bottom: 0;">
 --         <h1 style="font-weight: bold; margin: 0;">Fabric Analytics Roadshow Lab</h1>
 --       </td>
 --     </tr>
@@ -35,7 +35,7 @@
 -- </div>
 -- 
 -- ## Overview
--- Welcome to the **McMillan Industrial Group** analytics transformation journey! In this lab, you'll use the data collected in the lakehouse from the previous lab to build a data model for analytics using Microsoft Fabric's data warehouse.
+-- Let's continue the **McMillan Industrial Group** analytics transformation journey! In this lab, you'll use the data collected in the Lakehouse from the previous lab to build a data model for analytics using Fabric Data Warehouse.
 -- 
 -- ### The Business Scenario
 -- McMillan Industrial Group is a leading manufacturer and distributor of industrial equipment and parts. Their systems generate a variety of data. The analytical data model will be focused on:
@@ -70,14 +70,15 @@
 -- ### What You'll Learn in This Notebook
 -- 
 -- 1. **Data warehouse fundamentals** - What are dimensions and facts?
--- 2. **Working with schemas and tables** - Create schemas and explore supported DDL
--- 3. **Loading and transforming data with T-SQL** - Use stored procedures to move data from silver to gold
--- 4. **Operationalize warehouse loading** - Orchestrate and schedule data warehouse loading with Data Factory
+-- 1. **Working with schemas and tables** - Create schemas and explore supported DDL
+-- 1. **Loading and transforming data with T-SQL** - Use stored procedures to move data from silver to gold
+-- 1. **Beyond the basics** - Monitor the data warehouse and see how we achieve performance by default
+-- 1. **Operationalize warehouse loading** - Orchestrate and schedule data warehouse loading with Data Factory
 -- 
 -- ### The Target Schema
 -- By the end of the lab, you'll understand the basics of dimensional modeling and how to implement them using a Fabric data warehouse:
 -- 
--- ![McMillian Industrial Group Gold Schema](https://github.com/microsoft/fabric-analytics-roadshow-lab/blob/initial-version-prep/assets/images/spark/gold-erd.png?raw=true)
+-- ![McMillian Industrial Group Gold Schema](https://github.com/microsoft/fabric-analytics-roadshow-lab/blob/main/assets/images/warehouse/gold-erd.png?raw=true)
 -- 
 -- Let's get started!
 
@@ -94,7 +95,7 @@
 -- - Dimensions are often **denormalized** to optimize query performance and ease of use.
 -- - To track and analyze changes over time a **slowly changing dimension** can be implemented. The most common are:
 --     - **Type 0**: The attribute never changes (Social Security Number, or Birth Date)
---     - **Type 1**: The attribute can change but history is not tracked becuase the changes lack analytical value (Email addresses or Phone Numbers often fall in this category)
+--     - **Type 1**: The attribute can change but history is not tracked because the changes lack analytical value (Email addresses or Phone Numbers often fall in this category)
 --     - **Type 2**: The attribute can change and the history is tracked because it can add analytical value (Change in a customer's home address could be used to analyze purchasing habits over time)
 -- 
 -- ### Facts
@@ -143,7 +144,7 @@ SELECT * FROM sys.schemas WHERE name IN ('dim', 'fact')
 -- 
 -- **Column names** 
 -- 
--- A data warehouse is designed to be used by a wide variety of users across the organization. Users will often be from different departments or divisions. It is important to use business friendly terminology that everyone has agreed upon in the warehouse columns. For example, a source system column like t_t_amt_1 which shows up in the silver layer may not make sense to a business user. Instead translate this to a friendly name like total_amount_with_tax. Again, the use of underscores, camel case, and snake case are one of prefernce, just remember to be consistent. For this lab, we will use underscores. 
+-- A data warehouse is designed to be used by a wide variety of users across the organization. Users will often be from different departments or divisions. It is important to use business friendly terminology that everyone has agreed upon in the warehouse columns. For example, a source system column like t_t_amt_1 which shows up in the silver layer may not make sense to a business user. Instead translate this to a friendly name like total_amount_with_tax. Again, the use of underscores, camel case, and snake case are one of preference, just remember to be consistent. For this lab, we will use underscores. 
 -- 
 -- **Indexes and statistics** 
 -- 
@@ -151,11 +152,11 @@ SELECT * FROM sys.schemas WHERE name IN ('dim', 'fact')
 -- 
 -- **Identity columns**
 -- 
--- Identity columns are widely used for create surrogate keys. A surrogate key is a key generated in the data warehouse for joining tables. These are important because many source systems can have different key composition. One system may use an integer, another a VARCHAR(36), and another a composite key with multiple columns. Using a surrogate key makes joining tables easy and efficient. The surrogate key also aids in tracking changes (SCD Type 2) becuase each version of the record will carry the same business key (also known as an alternate key or AK). In Fabric data warehouse the identity column carries a data type of BIGINT.
+-- Identity columns are widely used for create surrogate keys. A surrogate key is a key generated in the data warehouse for joining tables. These are important because many source systems can have different key composition. One system may use an integer, another a VARCHAR(36), and another a composite key with multiple columns. Using a surrogate key makes joining tables easy and efficient. The surrogate key also aids in tracking changes (SCD Type 2) because each version of the record will carry the same business key (also known as an alternate key or AK). In Fabric data warehouse the identity column carries a data type of BIGINT.
 -- 
 -- **Data types** 
 -- 
--- Data type decisions are important as they can have an impact on resource allocation and performance. It is a best practice to always choose the smallest data type necessary. Don't use a BIGINT when an INT will do. Don't use VARCHAR(MAX) when a VARCHAR(50) will hold all the data with a pad for some potential new data. Use integers for key fields when possible. The Fabric warehouse engine does not support the same exact data types found in the SQL Server engine, but they are very close. For example, NVARCHAR is not supported, but becuase of the collation used on VARCHAR fields there shouldn't be issues with storing any characters. DATETIME2 supports up to a precision of 6 rather than 7. 
+-- Data type decisions are important as they can have an impact on resource allocation and performance. It is a best practice to always choose the smallest data type necessary. Don't use a BIGINT when an INT will do. Don't use VARCHAR(MAX) when a VARCHAR(50) will hold all the data with a pad for some potential new data. Use integers for key fields when possible. The Fabric warehouse engine does not support the same exact data types found in the SQL Server engine, but they are very close. For example, NVARCHAR is not supported, but because of the collation used on VARCHAR fields there shouldn't be issues with storing any characters. DATETIME2 supports up to a precision of 6 rather than 7. 
 -- 
 -- For an up to date list of data types refer to the [Data Types in Fabric Data Warehouse](https://learn.microsoft.com/en-us/fabric/data-warehouse/data-types) documentation page. 
 -- 
@@ -1071,12 +1072,298 @@ SELECT @fact_shipment      AS record_count_before, COUNT_BIG(*) AS record_count_
 
 -- MARKDOWN ********************
 
--- ## 🏭 Part 4: Operationalize Warehouse Loading
+-- ## ⚙️ Part 4: Beyond the Basics
 -- 
--- *This portion of the lab is optional.*
+-- Let's peel back the covers and take a look under the hood to see what happens when queries are run on the Fabric data warehouse. How do you monitor query activity and how do we achieve performance by default with the SQL engine. Items in this section are applicable to both the warehouse and the SQL analytics endpoint. 
+-- 
+-- **Caching**
+-- 
+-- Caching is a technique that improves the performance of data processing applications by reducing the IO operations. Caching stores frequently accessed data and metadata in a faster storage layer, such as local memory or local SSD disk, so that subsequent requests can be served more quickly, directly from the cache. If a particular set of data has been previously accessed by a query, any subsequent queries retrieve that data directly from the in-memory cache. This approach significantly diminishes IO latency, as local memory operations are notably faster compared to fetching data from remote storage.
+-- 
+-- In-memory and disk caching in Fabric Data Warehouse is fully transparent to the user. Irrespective of the origin, whether it be a warehouse table, a OneLake shortcut, or even OneLake shortcut that references to non-Azure services, the query caches all the data it accesses.
+-- 
+-- As the query accesses and retrieves data from storage, it performs a transformation process that transcodes the data from its original file-based format into highly optimized structures in in-memory cache.
+-- 
+-- ![Populating the in memory cache](https://github.com/microsoft/fabric-analytics-roadshow-lab/blob/main/assets/images/warehouse/populating-in-memory-cache.png?raw=true)
+-- 
+-- Certain datasets are too large to be accommodated within an in-memory cache. To sustain rapid query performance for these datasets, Warehouse utilizes disk space as a complementary extension to the in-memory cache. Any information that is loaded into the in-memory cache is also serialized to the SSD cache.
+-- 
+-- ![Populating the in memory and SSD caches](https://github.com/microsoft/fabric-analytics-roadshow-lab/blob/main/assets/images/warehouse/populating-in-memory-and-ssd-cache.png?raw=true)
+-- 
+-- Given that the in-memory cache has a smaller capacity compared to the SSD cache, data that is removed from the in-memory cache remains within the SSD cache for an extended period. When subsequent query requests this data, it's retrieved from the SSD cache into the in-memory cache significantly quicker than if fetched from remote storage, ultimately providing you with more consistent query performance.
+-- 
+-- ![Populating the in memory cache from SSD cache](https://github.com/microsoft/fabric-analytics-roadshow-lab/blob/main/assets/images/warehouse/populating-in-memory-cache-from-ssd-cache.png?raw=true)
+-- 
+-- **Statistics**
+-- 
+-- The Warehouse in Microsoft Fabric uses a query engine to create an execution plan for a given SQL query. When you submit a query, the query optimizer tries to enumerate all possible plans and choose the most efficient candidate. As is traditionally done, statistics can be created and updated manually. Alternatively, the engine will create statistics on an as-needed basis when queries are run and then subsequently refresh those statistics when the data in the table is changed. 
+-- 
+-- Let's explore how automatic statistics creation works by running the query below to see the existing statistics on the dim.customer table. Notice there will be already be several stats created on the table. These will align with the columns that we have run SELECT statements on during the ETL process (customer_sk and customer_ak).
+
+
+-- CELL ********************
+
+SELECT
+    SCHEMA_NAME(o.schema_id) AS [schema_name],
+    object_name(s.object_id) AS [table_name],
+    c.name AS [column_name],
+    s.name AS [stats_name],
+    s.stats_id,
+    STATS_DATE(s.object_id, s.stats_id) AS [stats_update_date], 
+    s.auto_created,
+    s.user_created,
+    s.stats_generation_method_desc 
+FROM sys.stats AS s 
+INNER JOIN sys.objects AS o 
+    ON o.object_id = s.object_id 
+LEFT JOIN sys.stats_columns AS sc 
+    ON s.object_id = sc.object_id 
+    AND s.stats_id = sc.stats_id 
+LEFT JOIN sys.columns AS c 
+    ON sc.object_id = c.object_id 
+    AND c.column_id = sc.column_id
+WHERE
+    o.type = 'U' /* Only check for stats on user-tables */
+    AND
+        (
+            s.auto_created = 1
+            OR s.user_created = 1
+        )
+    AND SCHEMA_NAME(o.schema_id) = 'dim'
+    AND o.name = 'customer'
+ORDER BY
+    schema_name,
+    table_name,
+    column_name
+
+-- METADATA ********************
+
+-- META {
+-- META   "language": "sql",
+-- META   "language_group": "sqldatawarehouse"
+-- META }
+
+-- MARKDOWN ********************
+
+-- Now, run a T-SQL query that aggregates data using another column in the table. This will trigger an automatic creation of statistics on those columns.
+
+-- CELL ********************
+
+SELECT
+    COUNT(*) AS customer_count,
+    delivery_state,
+    billing_state
+FROM dim.customer
+GROUP BY
+    delivery_state,
+    billing_state
+ORDER BY
+    customer_count DESC
+
+-- METADATA ********************
+
+-- META {
+-- META   "language": "sql",
+-- META   "language_group": "sqldatawarehouse"
+-- META }
+
+-- MARKDOWN ********************
+
+-- Return to the query to check statistics and notice there are now additional statistics that have been create on the delivery_state and billing_state columns. As the data in the table is updated those statistics will be automatically updated. No longer will your DBAs need to build a statistics creation and maintenance processes, the data warehouse has automated this task that is vital to ensuring optimal performance!
+
+-- CELL ********************
+
+SELECT
+    SCHEMA_NAME(o.schema_id) AS [schema_name],
+    object_name(s.object_id) AS [table_name],
+    c.name AS [column_name],
+    s.name AS [stats_name],
+    s.stats_id,
+    STATS_DATE(s.object_id, s.stats_id) AS [stats_update_date], 
+    s.auto_created,
+    s.user_created,
+    s.stats_generation_method_desc 
+FROM sys.stats AS s 
+INNER JOIN sys.objects AS o 
+    ON o.object_id = s.object_id 
+LEFT JOIN sys.stats_columns AS sc 
+    ON s.object_id = sc.object_id 
+    AND s.stats_id = sc.stats_id 
+LEFT JOIN sys.columns AS c 
+    ON sc.object_id = c.object_id 
+    AND c.column_id = sc.column_id
+WHERE
+    o.type = 'U' /* Only check for stats on user-tables */
+    AND
+        (
+            s.auto_created = 1
+            OR s.user_created = 1
+        )
+    AND SCHEMA_NAME(o.schema_id) = 'dim'
+    AND o.name = 'customer'
+ORDER BY
+    schema_name,
+    table_name,
+    column_name
+
+-- METADATA ********************
+
+-- META {
+-- META   "language": "sql",
+-- META   "language_group": "sqldatawarehouse"
+-- META }
+
+-- MARKDOWN ********************
+
+-- **Time travel**
+-- 
+-- Time travel unlocks the ability to query the prior versions of data without the need to generate multiple data copies, saving on storage costs. This article describes how to query warehouse tables using time travel at the statement level, using the T-SQL OPTION clause and the FOR TIMESTAMP AS OF syntax.
+-- 
+-- **Table Clones**
+-- 
+-- In Fabric Data Warehouse you can create a new table as a zero-copy clone of another table. Only the metadata of the table is copied. The underlying data of the table, stored as parquet files, is not copied. Clones can be created as of a specific point in time allowing for interesting scenarios like data recovery. 
+-- 
+-- The example below combines time travel for troubleshooting with table clones for data recovery. The code will generate sample records, wait a few seconds, "accidentally" delete some data, use time travel to view the changes in the records and locate a version of the record which can be recovered, and then use table clones to recover the deleted record. As you step through the code, change the result set in the top right corner of the results grid.
+-- 
+-- ![Time travel and clone table demo](https://github.com/microsoft/fabric-analytics-roadshow-lab/blob/main/assets/images/warehouse/time-travel-and-clone.gif?raw=true)
+
+
+-- CELL ********************
+
+/* Drop the example simulation tables in case they exist */
+DROP TABLE IF EXISTS dbo.time_travel_simulation
+DROP TABLE IF EXISTS dbo.time_travel_simulation_recovery
+
+/* Create a small table to store a few example values */
+CREATE TABLE dbo.time_travel_simulation
+    (
+        id              INT,
+        name            VARCHAR(50),
+        miles_driven    INT
+    )
+
+/* Add three records to the table */
+INSERT INTO dbo.time_travel_simulation
+VALUES 
+    (1, 'Tim', 150),
+    (2, 'Susan', 85),
+    (3, 'Fred', 70)
+
+/* Result 1: Verify all three records were added to the table */
+SELECT * FROM dbo.time_travel_simulation
+
+/* Wait 5 seconds before simulating a record being deleted by accident */
+WAITFOR DELAY '00:00:05'
+
+DECLARE @BeforeTheAccident VARCHAR(23) = (CONVERT(VARCHAR, GETDATE(), 25))
+
+/* Oh no! Someone wrote a bad query and deleted Tim's record from the table! */
+DELETE FROM dbo.time_travel_simulation WHERE id = 1
+
+/* Result 2: Look at the records in the table, Tim's record is gone! */
+SELECT * FROM dbo.time_travel_simulation
+
+/* Result 3: It's ok, the record's history still exists. We can validate that using Time Travel! */
+EXEC ('SELECT * FROM dbo.time_travel_simulation OPTION (FOR TIMESTAMP AS OF ''' + @BeforeTheAccident + ''')');
+
+/* We can even recover the data by creating a clone of the table when Tim's record still existed and moving it back into the dbo.time_travel_simulation table */
+EXEC ('CREATE TABLE dbo.time_travel_simulation_recovery AS CLONE OF dbo.time_travel_simulation AT ''' + @BeforeTheAccident + '''')
+
+/* With the table cloned, we can add Tim's record back to the dbo.time_travel_simulation table and verify the recovery is complete */
+INSERT INTO dbo.time_travel_simulation
+SELECT * FROM dbo.time_travel_simulation_recovery WHERE id = 1
+
+/* Result 4: Validate Tim's record has been recovered */
+SELECT * FROM dbo.time_travel_simulation
+
+/* Cleanup the sample tables */
+DROP TABLE IF EXISTS dbo.time_travel_simulation
+DROP TABLE IF EXISTS dbo.time_travel_simulation_recovery
+
+-- METADATA ********************
+
+-- META {
+-- META   "language": "sql",
+-- META   "language_group": "sqldatawarehouse"
+-- META }
+
+-- MARKDOWN ********************
+
+-- ## 🏭 Part 5: Operationalize Warehouse Loading
+-- 
+-- *This portion of the lab is informational only.*
 -- 
 -- All the objects needed to load the data warehouse (gold layer) are now in place! There is only one step left to operationalize the execution of the stored procedures. Right now, they need to be manually executed. Ideally, you will create a Data Factory pipeline to execute the procedures in the correct order and schedule it. 
 -- 
--- Open your Fabric workspace in a new tab and follow the instructions below.
+-- One way to build the pipeline is as follows:
 -- 
--- ****
+-- 1. Return to the workspace and create a new item. 
+-- 1. From the **Get data** or **Prepare data** sections of the New item list, select **Pipeline**. Give the pipeline a name when prompted such as *Load Gold Layer*. 
+-- 1. Add a series of **Stored procedure** activities which can be found in the **Transform** section of the activity list. Add 7 to the canvas; one for each stored procedure that needs to be run. 
+-- 1. Configure each activity to run one of the stored procedures. 
+-- 1. Setup the constraints so the dimensions all load in parallel, followed by the fact.order table, followed by the fact.shipment table. This takes into account all the loading dependencies. 
+-- 1. Finally, save and schedule the pipeline to run at the frequency of your choosing. 
+-- 
+-- ![Completed Data Factory orchestration pipeline](https://github.com/microsoft/fabric-analytics-roadshow-lab/blob/main/assets/images/warehouse/pipeline.png?raw=true)
+
+
+-- MARKDOWN ********************
+
+-- ---
+-- 
+-- ## 🎓 Key Takeaways & Next Steps
+-- 
+-- ### 🏆 What You've Accomplished
+-- 
+-- Congratulations! You've explored the basics of data warehousing within a medallion architecture in Microsoft Fabric. Here's what you've learned:
+-- 
+-- #### 1. Data Warehouse Fundamentals
+-- - **Star schema**: The data warehouse engine is optimized for large batch reads/writes in a start schema
+-- - **Facts**: The business events that occur (associated with action words: sales, shipments, calls, page views, etc.)
+-- - **Dimensions**: Describe a fact and are ways to slice and dice a fact (by customer, by date, by item, etc.)
+-- - **Slowly changing dimensions**: Used to track updates and history over time in a dimension, most commonly Type 0, 1, and 2
+-- 
+-- #### 2. Working with schemas and tables
+-- - **Table organization**: Used to group tables together into logical groups like fact/dim, business unit, or source system
+-- - **Securing your data**: Schemas are the first logical level to restrict access followed by tables then rows within a table
+-- - **Data types**: The query optimizer takes data types into account when building a query plan, smallest data type needed should be chosen
+-- 
+-- #### 3. Loading and transforming data with T-SQL
+-- - **Cross database queries**: Useful for loading data from a staging warehouse or a lakehouse, reference any database in the workspace with a 3-part name
+-- - **Multiple ingestion options**: Use COPY INTO for maximum throughput and OPENROWSET for data exploration
+-- - **Data Factory**: Use pipelines and COPY Job to load tables, but beware of the performance difference compared to COPY INTO, OPENROWSET, or cross database queries
+-- - **Data transformation**: Wrap logic in stored procedures for easy reference in orchestration tools; be sure to handle unknown members and late arriving facts
+-- 
+-- #### 4. Beyond the basics
+-- - **Caching**: The warehouse caches data in memory and in local SSDs on compute nodes
+-- - **Statistics**: Auto, proactive and incremental statistics help create and maintain stats automatically for maximum query performance
+-- - **Time travel and clones**: These features are excellent tools for historical analysis and data recovery
+-- 
+-- #### 5. Operationalizing warehouse loading
+-- - **Data Factory**: Use stored procedure activities to execute code on the warehouse ensuring dependencies are accounted for when tables are loaded
+-- - **Watermark table**: Use a watermark table or a control table to track the last load time for each table to build incremental loading logic
+-- - **Scheduling a pipeline**: Pipelines can be scheduled to run at whatever frequency required by the business but be cautious about the impact of trickle loading data
+-- 
+-- ---
+-- 
+-- ### 🚀 What's Next?
+-- 
+-- Continue your journey through the McMillan Industrial Group data pipeline:
+-- 
+-- | Experience | What You'll Learn |
+-- |----------|-------------------|
+-- | **🤖 3_create_data_agent** Notebook | Chat with your data using natural language via a Data Agent |
+-- 
+-- ### 📚 Additional Resources
+-- 
+-- Expand your knowledge with these official docs:
+-- 
+-- - [Microsoft Fabric Documentation](https://learn.microsoft.com/fabric/)
+-- - [Better together: the lakehouse and warehouse](https://learn.microsoft.com/en-us/fabric/data-warehouse/get-started-lakehouse-sql-analytics-endpoint)
+-- - [Dimensional modeling in Fabric Data Warehouse](https://learn.microsoft.com/en-us/fabric/data-warehouse/dimensional-modeling-overview)
+-- - [Migrate to Fabric Data Warehouse](https://learn.microsoft.com/en-us/fabric/data-warehouse/migration-assistant)
+-- 
+-- ---
+-- 
+-- **🎉 Great work completing this notebook!** You have built and entire end-to-end data pipeline that generates data and moves it through all three layers in a medallion architecture. Move on to the next notebook when you're ready to build the data agent! 🚀
+

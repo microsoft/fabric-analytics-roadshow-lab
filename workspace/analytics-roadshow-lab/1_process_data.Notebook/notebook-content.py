@@ -75,10 +75,10 @@
 # ### Step 1: Trigger the Spark Job Definition
 # > **Note:** Please read the full instructions for this step before opening the Spark Job Definition.
 # 
-# 1. **Open Spark Job Definition** - Click here to open: [StreamBonzeAndSilver](https://app.powerbi.com/groups/$workspaceId/sparkjobdefinitions/$sparkJobDefinitionId?experience=power-bi)
+# 1. **Open Spark Job Definition** - Click here to open: [stream_bronze_and_silver](https://app.powerbi.com/groups/$workspaceId/sparkjobdefinitions/$sparkJobDefinitionId?experience=power-bi)
 # 1. **Click** the **"Run"** button at the top of the screen
 # 1. **Confirm** the job starts successfully (you'll see a status of "Running")
-# 1. **Return** to this Notebook (1_ExploreData)
+# 1. **Return** to this Notebook (1_process_data)
 # 
 # ### What Happens Next
 # 
@@ -1156,15 +1156,15 @@ display(df)
 # 
 # | Experience | What You'll Learn |
 # |----------|-------------------|
-# | **🥇 2_ModelData** Notebook | Build dimensional models in Fabric Warehouse using T-SQL |
-# | **🤖 3_SalesAndLogisticsAgent** | Chat with your data using natural language via a Data Agent |
+# | **🥇 2_model_data** Notebook | Build dimensional models in Fabric Warehouse using T-SQL |
+# | **🤖 3_create_data_agent** Notebook | Chat with your data using natural language via a Data Agent |
 # 
 # ### 📚 Additional Resources
 # 
 # Expand your knowledge with these official docs:
 # 
 # - [Microsoft Fabric Documentation](https://learn.microsoft.com/fabric/)
-# - [Spark Structured Streaming Guide](https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html)
+# - [Spark Structured Streaming Guide](https://archive.apache.org/dist/spark/docs/3.5.2/structured-streaming-programming-guide.html)
 # - [Delta Lake Best Practices](https://docs.delta.io/latest/best-practices.html)
 # - [Fabric AI Functions](https://learn.microsoft.com/en-us/fabric/data-science/ai-functions/overview)
 # 
