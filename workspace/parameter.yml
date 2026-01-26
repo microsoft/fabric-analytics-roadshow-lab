@@ -29,7 +29,7 @@ find_replace:
   # Update SJD URL in Notebook Markdown
   - find_value: $sparkJobDefinitionId
     replace_value:
-      _ALL_: "$items.SparkJobDefinition.StreamBronzeAndSilver.$id" # SJD GUID (dynamic)
+      _ALL_: "$items.SparkJobDefinition.stream_bronze_and_silver.$id" # SJD GUID (dynamic)
     is_regex: "false"
     item_type: "Notebook" # filter on notebook files
     item_name: ["1_ExploreData"] # filter on specific notebook files
