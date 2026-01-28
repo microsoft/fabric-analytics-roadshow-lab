@@ -14,7 +14,21 @@
           "secureOutput": false,
           "secureInput": false
         },
-        "typeProperties": {}
+        "typeProperties": {
+          "storedProcedureName": "[dbo].[load_dim_customer]"
+        },
+        "linkedService": {
+          "name": "SalesAndLogisticsWH",
+          "properties": {
+            "annotations": [],
+            "type": "DataWarehouse",
+            "typeProperties": {
+              "endpoint": "x6eps4xrq2xudenlfv6naeo3i4-4tamiycvd3gejnwdqygtxnbrxi.msit-datawarehouse.fabric.microsoft.com",
+              "artifactId": "8fd6e79b-ec24-4826-aef5-dd1ee0b59438",
+              "workspaceId": "60c4c0e4-1e55-44cc-b6c3-860d3bb431ba"
+            }
+          }
+        }
       },
       {
         "name": "Load dim item",
@@ -29,7 +43,21 @@
           "secureOutput": false,
           "secureInput": false
         },
-        "typeProperties": {}
+        "typeProperties": {
+          "storedProcedureName": "[dbo].[load_dim_item]"
+        },
+        "linkedService": {
+          "name": "SalesAndLogisticsWH",
+          "properties": {
+            "annotations": [],
+            "type": "DataWarehouse",
+            "typeProperties": {
+              "endpoint": "x6eps4xrq2xudenlfv6naeo3i4-4tamiycvd3gejnwdqygtxnbrxi.msit-datawarehouse.fabric.microsoft.com",
+              "artifactId": "8fd6e79b-ec24-4826-aef5-dd1ee0b59438",
+              "workspaceId": "60c4c0e4-1e55-44cc-b6c3-860d3bb431ba"
+            }
+          }
+        }
       },
       {
         "name": "Load fact order",
@@ -78,7 +106,7 @@
         "typeProperties": {
           "storedProcedureName": "[dbo].[load_fact_order]"
         },
-        "connectionSettings": {
+        "linkedService": {
           "name": "SalesAndLogisticsWH",
           "properties": {
             "annotations": [],
@@ -87,9 +115,6 @@
               "endpoint": "x6eps4xrq2xudenlfv6naeo3i4-4tamiycvd3gejnwdqygtxnbrxi.msit-datawarehouse.fabric.microsoft.com",
               "artifactId": "8fd6e79b-ec24-4826-aef5-dd1ee0b59438",
               "workspaceId": "60c4c0e4-1e55-44cc-b6c3-860d3bb431ba"
-            },
-            "externalReferences": {
-              "connection": "d013ab0c-0079-4667-b40a-0a5750334023"
             }
           }
         }
@@ -107,7 +132,21 @@
           "secureOutput": false,
           "secureInput": false
         },
-        "typeProperties": {}
+        "typeProperties": {
+          "storedProcedureName": "[dbo].[load_dim_address]"
+        },
+        "linkedService": {
+          "name": "SalesAndLogisticsWH",
+          "properties": {
+            "annotations": [],
+            "type": "DataWarehouse",
+            "typeProperties": {
+              "endpoint": "x6eps4xrq2xudenlfv6naeo3i4-4tamiycvd3gejnwdqygtxnbrxi.msit-datawarehouse.fabric.microsoft.com",
+              "artifactId": "8fd6e79b-ec24-4826-aef5-dd1ee0b59438",
+              "workspaceId": "60c4c0e4-1e55-44cc-b6c3-860d3bb431ba"
+            }
+          }
+        }
       },
       {
         "name": "Load dim order_source",
@@ -122,7 +161,21 @@
           "secureOutput": false,
           "secureInput": false
         },
-        "typeProperties": {}
+        "typeProperties": {
+          "storedProcedureName": "[dbo].[load_dim_order_source]"
+        },
+        "linkedService": {
+          "name": "SalesAndLogisticsWH",
+          "properties": {
+            "annotations": [],
+            "type": "DataWarehouse",
+            "typeProperties": {
+              "endpoint": "x6eps4xrq2xudenlfv6naeo3i4-4tamiycvd3gejnwdqygtxnbrxi.msit-datawarehouse.fabric.microsoft.com",
+              "artifactId": "8fd6e79b-ec24-4826-aef5-dd1ee0b59438",
+              "workspaceId": "60c4c0e4-1e55-44cc-b6c3-860d3bb431ba"
+            }
+          }
+        }
       },
       {
         "name": "Load fact shipment",
@@ -144,7 +197,21 @@
           "secureOutput": false,
           "secureInput": false
         },
-        "typeProperties": {}
+        "typeProperties": {
+          "storedProcedureName": "[dbo].[load_fact_shipment]"
+        },
+        "linkedService": {
+          "name": "SalesAndLogisticsWH",
+          "properties": {
+            "annotations": [],
+            "type": "DataWarehouse",
+            "typeProperties": {
+              "endpoint": "x6eps4xrq2xudenlfv6naeo3i4-4tamiycvd3gejnwdqygtxnbrxi.msit-datawarehouse.fabric.microsoft.com",
+              "artifactId": "8fd6e79b-ec24-4826-aef5-dd1ee0b59438",
+              "workspaceId": "60c4c0e4-1e55-44cc-b6c3-860d3bb431ba"
+            }
+          }
+        }
       },
       {
         "name": "Load dim facility",
@@ -159,7 +226,21 @@
           "secureOutput": false,
           "secureInput": false
         },
-        "typeProperties": {}
+        "typeProperties": {
+          "storedProcedureName": "[dbo].[load_dim_facility]"
+        },
+        "linkedService": {
+          "name": "SalesAndLogisticsWH",
+          "properties": {
+            "annotations": [],
+            "type": "DataWarehouse",
+            "typeProperties": {
+              "endpoint": "x6eps4xrq2xudenlfv6naeo3i4-4tamiycvd3gejnwdqygtxnbrxi.msit-datawarehouse.fabric.microsoft.com",
+              "artifactId": "8fd6e79b-ec24-4826-aef5-dd1ee0b59438",
+              "workspaceId": "60c4c0e4-1e55-44cc-b6c3-860d3bb431ba"
+            }
+          }
+        }
       }
     ]
   }
