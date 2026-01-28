@@ -26,7 +26,7 @@
 #   <table style="border: none; margin: 0; padding: 0; border-collapse: collapse;">
 #     <tr>
 #       <td style="border: none; vertical-align: middle; text-align: left; padding: 0; margin: 0;">
-#         <img src="https://github.com/microsoft/fabric-analytics-roadshow-lab/blob/initial-version-prep/assets/images/spark/analytics.png?raw=true" width="140" />
+#         <img src="https://github.com/microsoft/fabric-analytics-roadshow-lab/blob/main/assets/images/spark/analytics.png?raw=true" width="140" />
 #       </td>
 #       <td style="border: none; vertical-align: middle; padding-left: 0px; text-align: left; padding-right: 0; padding-top: 0; padding-bottom: 0;">
 #         <h1 style="font-weight: bold; margin: 0;">Fabric Analytics Roadshow Lab</h1>
