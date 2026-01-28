@@ -106,6 +106,45 @@
 
 # MARKDOWN ********************
 
+# ### ⏳ Waiting for Streaming Data
+# 
+# 
+# > **Run the next cell** and grab a sip of coffee ☕ — the below waits until our stream produces its first output file.  
+# Once it completes successfully, you can proceed with the rest of the lab.
+
+
+# CELL ********************
+
+import time
+
+print('Waiting for tutorial files to start landing...')
+files = []
+start_time = time.time()
+
+while True:
+    if time.time() - start_time > 600:
+        raise TimeoutError("Timed out waiting for files in Files/archive/item after 10 minutes. Make sure `stream_bronze_and_silver` Spark Job Definition was triggered!")
+    time.sleep(5)
+    try:
+        files = notebookutils.fs.ls('Files/archive/item')
+    except Exception as e:
+        if "FileNotFoundException" in str(e):
+            continue
+        else:
+            raise
+    if len(files) > 0:
+        print('Ready to proceed!')
+        break
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# MARKDOWN ********************
+
 # ## 📚 Part 1: Spark Fundamentals
 # 
 # Before diving into streaming data, let's understand the power of Apache Spark. Spark is a distributed computing engine that allows you to process massive datasets across one or many machines.
@@ -118,12 +157,12 @@
 # 
 # Fabric Spark Notebooks have a Spark session already started, so let's get right into exploring some data.
 # 
-# Execute the cell below to preview parquet data landing in the `Files/landing/item` folder. 
+# Execute the cell below to preview parquet data that has been processed and moved within the `Files/archive/item` directory in OneLake. 
 
 # CELL ********************
 
 # Read parquet file via Spark
-df = spark.read.parquet('Files/landing/item')
+df = spark.read.parquet('Files/archive/item/', recursiveFileLookup=True)
 display(df)
 
 # METADATA ********************
@@ -135,7 +174,7 @@ display(df)
 
 # MARKDOWN ********************
 
-# Run the cell below to preview JSON data from the `Files/landing/shipment` folder. Notice how there's a `data` `Struct` column. This contains the entire shipment structure with various nested elements. This data will be flattened when writing to the Silver zone.
+# Run the cell below to preview JSON data from the `Files/archive/shipment` folder. Notice how there's a `data` `Struct` column. This contains the entire shipment structure with various nested elements. This data will be flattened when writing to the Silver zone.
 # 
 # > ℹ️ **Tip:** Complex data type columns (Struct, Map, Array, etc.) can be drilled into by clicking on a cell value and then clicking the caret symbol. 
 # 
@@ -144,7 +183,7 @@ display(df)
 # CELL ********************
 
 # Read parquet file via Spark
-df = spark.read.json('Files/landing/shipment', multiLine=True)
+df = spark.read.json('Files/archive/shipment', multiLine=True, recursiveFileLookup=True)
 display(df)
 
 # METADATA ********************
@@ -167,7 +206,7 @@ display(df)
 # **1. Creating a Temporary View**
 # - Register JSON files as a SQL table (exists only for this session)
 # - Query file-based data as if it were a database table
-# - Express additional options like `multiLine` JSON configuration
+# - Express additional options like `multiLine` JSON configuration and `recursiveFileLookup`
 # 
 # **2. Exploding Nested Arrays** _(you'll write this query!)_
 # - The shipment JSON contains an **array** of shipment records
@@ -187,8 +226,9 @@ display(df)
 # MAGIC CREATE OR REPLACE TEMPORARY VIEW shipment_data
 # MAGIC USING JSON
 # MAGIC OPTIONS (
-# MAGIC   path "Files/landing/shipment",
-# MAGIC   multiLine "true"
+# MAGIC   path "Files/archive/shipment",
+# MAGIC   multiLine "true",
+# MAGIC   recursiveFileLookup "true"
 # MAGIC );
 
 # METADATA ********************
@@ -349,7 +389,7 @@ display(df)
 
 # CELL ********************
 
-item_df = spark.read.parquet('Files/landing/item')
+item_df = spark.read.parquet('Files/archive/item', recursiveFileLookup=True)
 display(item_df)
 
 # METADATA ********************
@@ -370,12 +410,14 @@ display(item_df)
 # 1. Schema can be implicit or defined → `.schema()` is required for streaming operations
 # 1. `df.write` → `df.writeStream` (add checkpoint location and trigger)
 # 
+# > ℹ️ **Note:** we are reading from the `archive` directory because our `stream_bronze_and_silver` Spark Job Definition is processing the files in the `landing` directory in near real-time and then moving processed files to the `archive` directory. This gives us a stable directory to read from.
+# 
 # Execute the cell below to create your first streaming pipeline:
 
 # CELL ********************
 
 # Create a streaming DataFrame to incrementally read only new parquet files as they arrive
-item_stream_df = spark.readStream.schema(item_df.schema).parquet('Files/landing/item')
+item_stream_df = spark.readStream.schema(item_df.schema).parquet('Files/archive/item', recursiveFileLookup=True)
 
 # Write stream triggered as a single batch (process available files)
 item_stream = (item_stream_df.writeStream
@@ -716,7 +758,10 @@ DataFrame.benchmark_native_engine = _benchmark_native_engine
 
 # CELL ********************
 
-df = spark.sql("""
+from datetime import datetime, timedelta
+bench_ts_str = (datetime.now() - timedelta(minutes=1)).strftime("%Y-%m-%d %H:%M:%S")
+
+df = spark.sql(f"""
     -- Shipment Exception Analysis
     SELECT 
         sse.exception_code,
@@ -730,14 +775,14 @@ df = spark.sql("""
         ROUND(SUM(CASE WHEN sse_del.event_timestamp > s.committed_delivery_date 
                   THEN s.late_delivery_penalty_per_day * datediff(sse_del.event_timestamp, s.committed_delivery_date) 
                   ELSE 0 END), 2) as total_penalties
-    FROM silver.shipment_scan_event sse
-    INNER JOIN silver.shipment s ON sse.shipment_id = s.shipment_id
-    INNER JOIN silver.order o ON s.order_id = o.order_id
-    INNER JOIN silver.item i ON o.item_id = i.item_id
-    INNER JOIN silver.customer c ON s.customer_id = c.customer_id
-    LEFT JOIN silver.shipment_scan_event sse_res ON sse.shipment_id = sse_res.shipment_id 
+    FROM silver.shipment_scan_event TIMESTAMP AS OF '{bench_ts_str}' sse
+    INNER JOIN silver.shipment TIMESTAMP AS OF '{bench_ts_str}' s ON sse.shipment_id = s.shipment_id
+    INNER JOIN silver.order TIMESTAMP AS OF '{bench_ts_str}' o ON s.order_id = o.order_id
+    INNER JOIN silver.item TIMESTAMP AS OF '{bench_ts_str}' i ON o.item_id = i.item_id
+    INNER JOIN silver.customer TIMESTAMP AS OF '{bench_ts_str}' c ON s.customer_id = c.customer_id
+    LEFT JOIN silver.shipment_scan_event TIMESTAMP AS OF '{bench_ts_str}' sse_res ON sse.shipment_id = sse_res.shipment_id 
         AND sse_res.related_exception_event_id = sse.event_id
-    LEFT JOIN silver.shipment_scan_event sse_del ON s.shipment_id = sse_del.shipment_id 
+    LEFT JOIN silver.shipment_scan_event TIMESTAMP AS OF '{bench_ts_str}' sse_del ON s.shipment_id = sse_del.shipment_id 
         AND sse_del.event_type = 'Delivered'
     WHERE sse.exception_code IS NOT NULL
       AND sse.exception_code IN ('DAMAGED', 'WEATHER', 'VEHICLE', 'CUSTOMS')
