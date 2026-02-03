@@ -35,7 +35,7 @@ Copy, paste, and the run the below in a Notebook cell.
 %pip install fabric-jumpstart --quiet
 ```
 
-```
+```python
 import fabric_jumpstart
 fabric_jumpstart.install('analytics-roadshow-lab')
 ```
