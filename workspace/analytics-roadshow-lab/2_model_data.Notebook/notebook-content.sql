@@ -586,7 +586,7 @@ BEGIN
                 destination_country AS country,
                 destination_latitude AS latitude,
                 destination_longitude AS longitude
-            FROM SalesAndLogisticsLH.silver.shipment
+            FROM [SalesAndLogisticsLH].silver.shipment
             WHERE
                 _processing_timestamp > @last_load_datetime
                 AND _processing_timestamp <= @new_load_datetime
@@ -602,7 +602,7 @@ BEGIN
                 origin_country AS country,
                 origin_latitude AS latitude,
                 origin_longitude AS longitude
-            FROM SalesAndLogisticsLH.silver.shipment
+            FROM [SalesAndLogisticsLH].silver.shipment
             WHERE
                 _processing_timestamp > @last_load_datetime
                 AND _processing_timestamp <= @new_load_datetime
@@ -671,7 +671,7 @@ BEGIN
                 [billing_state],
                 '1900-01-31' AS start_date,
                 '2099-12-31' AS end_date
-            FROM SalesAndLogisticsLH.silver.customer
+            FROM [SalesAndLogisticsLH].silver.customer
             WHERE
                 _processing_timestamp > @last_load_datetime
                 AND _processing_timestamp <= @new_load_datetime
@@ -741,7 +741,7 @@ BEGIN
                 longitude,
                 '1900-01-01' AS start_date,
                 '12-31-2099' AS end_date
-            FROM SalesAndLogisticsLH.silver.facility
+            FROM [SalesAndLogisticsLH].silver.facility
             WHERE 
                 _processing_timestamp > @last_load_datetime
                 AND _processing_timestamp <= @new_load_datetime
@@ -806,7 +806,7 @@ BEGIN
                 span_rating,
                 '1900-01-01' AS start_date,
                 '12-31-2099' AS end_date
-            FROM SalesAndLogisticsLH.silver.item
+            FROM [SalesAndLogisticsLH].silver.item
             WHERE
                 _processing_timestamp > @last_load_datetime
                 AND _processing_timestamp <= @new_load_datetime
@@ -855,7 +855,7 @@ BEGIN
         source AS order_source_name,
         '1900-01-01' AS start_date,
         '12-31-2099' AS end_date
-    FROM SalesAndLogisticsLH.silver.[order] AS o
+    FROM [SalesAndLogisticsLH].silver.[order] AS o
     LEFT JOIN dim.order_source AS os
         ON o.source = os.order_source_ak
     WHERE
@@ -895,7 +895,7 @@ BEGIN
         o.extended_price,
         o.net_weight,
         o.warranty_included
-    FROM SalesAndLogisticsLH.silver.[order] AS o
+    FROM [SalesAndLogisticsLH].silver.[order] AS o
     LEFT JOIN dim.order_source AS os
         ON o.source = os.order_source_ak
     LEFT JOIN dim.customer AS c
@@ -959,8 +959,8 @@ BEGIN
         ,s.is_fragile
         ,s.is_hazardous
         ,s.requires_refrigeration
-    FROM SalesAndLogisticsLH.silver.shipment AS s
-    LEFT JOIN SalesAndLogisticsLH.silver.[order] AS o
+    FROM [SalesAndLogisticsLH].silver.shipment AS s
+    LEFT JOIN [SalesAndLogisticsLH].silver.[order] AS o
         ON s.order_id = o.order_id
     LEFT JOIN dim.customer AS c
         ON s.customer_id = c.customer_ak
@@ -982,7 +982,7 @@ BEGIN
         SELECT 
             shipment_id,
             CONVERT(DATE, event_timestamp) AS delivery_date
-        FROM SalesAndLogisticsLH.silver.shipment_scan_event
+        FROM [SalesAndLogisticsLH].silver.shipment_scan_event
         WHERE event_type = 'Delivered'
     ) AS delivery
         ON s.shipment_id = delivery.shipment_id
