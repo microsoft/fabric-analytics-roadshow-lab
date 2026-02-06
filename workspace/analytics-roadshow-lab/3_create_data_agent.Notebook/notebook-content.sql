@@ -68,7 +68,17 @@
 -- 
 -- In the next sections, you will see how to setup agent instructions, data source instructions, and provide sample queries to fine tune the agent for your business.
 -- 
--- To get started!
+-- ### Creating a data agent
+-- 
+-- To get started, you need to create a data agent item in your workspace.
+-- 
+-- 1. In your workspace, select the **New item** button.
+-- 
+-- 1. On the **New item** page, search for and select **Data Agent**.
+-- 
+-- 1. For the name, enter **Sales & Logistics Data Agent** then select **Create**.
+-- 
+-- Now you're ready to configure the agent!
 
 
 -- MARKDOWN ********************
