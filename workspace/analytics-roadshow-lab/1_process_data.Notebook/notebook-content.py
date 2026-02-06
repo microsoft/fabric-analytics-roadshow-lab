@@ -99,7 +99,7 @@
 # ### The Target Schema
 # By the end of the lab, you'll understand some basic concepts and then see the outcome of a mature data engineering pipeline:
 # 
-# ![McMillian Industrial Group Silver Schema](https://github.com/microsoft/fabric-analytics-roadshow-lab/blob/initial-version-prep/assets/images/spark/silver-erd.png?raw=true)
+# ![McMillian Industrial Group Silver Schema](https://github.com/microsoft/fabric-analytics-roadshow-lab/blob/main/assets/images/spark/silver-erd.png?raw=true)
 # 
 # Let's get started!
 
@@ -178,7 +178,7 @@ display(df)
 # 
 # > ℹ️ **Tip:** Complex data type columns (Struct, Map, Array, etc.) can be drilled into by clicking on a cell value and then clicking the caret symbol. 
 # 
-# ![Explore Struct](https://github.com/microsoft/fabric-analytics-roadshow-lab/blob/initial-version-prep/assets/images/spark/explore-struct.gif?raw=true)
+# ![Explore Struct](https://github.com/microsoft/fabric-analytics-roadshow-lab/blob/main/assets/images/spark/explore-struct.gif?raw=true)
 
 # CELL ********************
 
@@ -483,6 +483,7 @@ item_stream.lastProgress
 # 1. Look at the **Lakehouse explorer** on the left sidebar
 # 2. Expand the **Tables** section
 # 3. Find the `item` table under the `dbo` schema
+#   3a. If you don't see it, click the three-dot menu at the right side of the schema and select **Refresh**
 # 4. Right-click and select **Load data -> Spark**, drag and drop the table onto your Notebook, or query it with SparkSQL!
 # 
 # > 🎉 **Congratulations!** You've just created your first Spark Structured Streaming pipeline in Microsoft Fabric!
