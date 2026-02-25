@@ -146,6 +146,8 @@ SELECT * FROM sys.schemas WHERE name IN ('dim', 'fact')
 -- 
 -- A data warehouse is designed to be used by a wide variety of users across the organization. Users will often be from different departments or divisions. It is important to use business friendly terminology that everyone has agreed upon in the warehouse columns. For example, a source system column like t_t_amt_1 which shows up in the silver layer may not make sense to a business user. Instead translate this to a friendly name like total_amount_with_tax. Again, the use of underscores, camel case, and snake case are one of preference, just remember to be consistent. For this lab, we will use underscores. 
 -- 
+-- > 💡 **Tip:** Clear, business‑friendly column names help AI and agentic systems understand your data more accurately, improving natural‑language queries and overall LLM reasoning.
+-- 
 -- **Indexes and statistics** 
 -- 
 -- Even though data warehouses are generally index-lite databases Fabric data warehouse does not require any indexing! Similarly, no user action is required for statistics; they will be maintained automatically. As a result, the scripts that follow in this lab will not drop, create, or update any indexes or statistics. 
@@ -369,7 +371,8 @@ SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA IN ('dim', 'fact')
 -- The **OPENROWSET** command allows you to directly read data from files stored in OneLake or external Azure storage accounts without prior ingestion into a table. It can be used for data exploration or data ingestion. 
 -- 
 -- Look at the code in the cell below and run it to create a sample data table and ingest the data from Azure storage into the dbo.CopyIntoExample table and view the data in the table.
-
+--
+-- > ℹ️ _Note: The next couple of cells are just an example and not part of the end-to-end solution built in this lab._
 
 -- CELL ********************
 
