@@ -45,7 +45,7 @@ fabric_jumpstart.install('analytics-roadshow-lab')
 > It will take approximately 8 minutes to install all lab content into your workspace. You will see a success message once done.
 
 ## What You Will Build
-- **Landing → Bronze → Silver**: Structured Streaming pipelines that ingest JSON/Parquet files, add audit metadata, and flatten nested shipment payloads ([workspace/analytics-roadshow-lab/1_ExploreData.Notebook/notebook-content.py](workspace/analytics-roadshow-lab/1_ExploreData.Notebook/notebook-content.py)).
+- **Landing → Bronze → Silver**: Structured Streaming pipelines that ingest JSON/Parquet files, add audit metadata, and flatten nested shipment payloads.
 - **Gold (Warehouse)**: Dimensional model with schemas `dim` and `fact`, type 1/2-ready dimensions, and fact tables for orders and shipments, loaded via stored procedures and incremental watermarks.
 - **Data Pipeline** (optional): Refresh your gold model via calling stored procedures orchestrated via a Data Factory Pipeline.
 - **Data Agent**: An agent that can answer questions over the warehouse with curated context and few-shots.
