@@ -16,7 +16,7 @@ DEPLOYMENT INSTRUCTIONS:
    
 3. Create Spark Job Definition:
    - Main file: Upload this file (main.py)
-   - Reference files: Upload pipeline_config.py
+   - Reference files: Upload pipeline_config.py, singleton_lock.py
    - Environment: Select environment with arcflow wheel
    - Reference Lakehouse: Select the Lakehouse where data should be written
    
@@ -39,9 +39,11 @@ from lakegen.generators.mcmillan_industrial_group import McMillanDataGen
 import notebookutils
 from pyspark.sql import SparkSession
 from pipeline_config import tables
+from singleton_lock import SingletonJobLock
 
 import logging
 import sys
+import atexit
 
 # Configure logging
 logging.basicConfig(
@@ -70,12 +72,25 @@ if __name__ == "__main__":
     spark_context = spark.sparkContext
     spark_context.setLogLevel("ERROR")
 
-    logger.info("=" * 80)
-    logger.info("Starting LakeGen: McMillanDataGen")
-    logger.info("=" * 80)
+    # Step 1.5: Acquire singleton lock to prevent concurrent runs
     default_workspace_id = notebookutils.runtime.context['currentWorkspaceId']
     default_lakehouse_id = notebookutils.runtime.context['defaultLakehouseId']
     onelake_endpoint = spark.sparkContext._jsc.hadoopConfiguration().get("trident.onelake.endpoint").split('//')[1]
+    
+    lock_path = f"abfss://{default_workspace_id}@{onelake_endpoint}/{default_lakehouse_id}/Files/.locks/stream_bronze_and_silver.lock"
+    job_lock = SingletonJobLock(lock_path=lock_path)
+    
+    if not job_lock.acquire():
+        logger.error("Exiting due to concurrent run prevention")
+        spark.stop()
+        sys.exit(1)
+    
+    # Register cleanup handler to release lock on exit
+    atexit.register(job_lock.release)
+
+    logger.info("=" * 80)
+    logger.info("Starting LakeGen: McMillanDataGen")
+    logger.info("=" * 80)
     target_folder_uri=f"abfss://{default_workspace_id}@{onelake_endpoint}/{default_lakehouse_id}/Files/landing/"
 
     logger.info(target_folder_uri)
@@ -125,4 +140,8 @@ if __name__ == "__main__":
 
     # Step 3: Run full pipeline
     logger.info("Starting full ELT pipeline...")
-    controller.run_full_pipeline(zones=['bronze', 'silver'])
+    try:
+        controller.run_full_pipeline(zones=['bronze', 'silver'])
+    finally:
+        # Ensure lock is released even if pipeline fails
+        job_lock.release()
